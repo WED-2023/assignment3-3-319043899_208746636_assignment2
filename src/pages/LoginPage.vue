@@ -45,14 +45,17 @@ export default {
       if (await v$.value.$validate()) {
         // קריאה לשרת
         try {
-          await window.axios.post('/login', {
+          await window.axios.post('/Login', {
             username: state.username,
             password: state.password
+          },{
+            withCredentials: true  
           });
           window.store.login(state.username);
-          window.router.push('/main');
+          window.location.href = 'http://localhost:8080';
         } catch (err) {
-          window.toast("Login failed", err.response.data.message, "danger");
+          const message = err.response?.data?.message || err.message || "Unknown error";
+          window.toast("Login failed", message, "danger");
         }
       }
     };

@@ -2,19 +2,18 @@
   <div class="container">
     <h1 class="title">Main Page</h1>
 
-    <RecipePreviewList title="Random Recipes" class="RandomRecipes center" />
+    <RecipePreviewList title="Random Recipes" type="random" class="RandomRecipes center" />
 
-    <div v-if="!store.username" class="text-center mt-4">
-      <router-link :to="{ name: 'login' }">
-        <button class="btn btn-primary">You need to Login to view this</button>
-      </router-link>
+    <div v-if="!store.username" class="mt-4">
+      <LoginPage />
     </div>
 
     <RecipePreviewList
+      v-if="store.username"
       title="Last Viewed Recipes"
+      type="lastViewed"
       :class="{
         RandomRecipes: true,
-        blur: !store.username,
         center: true
       }"
       disabled
@@ -25,10 +24,12 @@
 <script>
 import { getCurrentInstance } from 'vue';
 import RecipePreviewList from "../components/RecipePreviewList.vue";
+import LoginPage from "./LoginPage.vue";
 
 export default {
   components: {
-    RecipePreviewList
+    RecipePreviewList,
+    LoginPage
   },
   setup() {
     const internalInstance = getCurrentInstance();

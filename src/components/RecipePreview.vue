@@ -1,15 +1,15 @@
 <template>
   <div class="card h-100">
     <img
-      v-if="recipe.image"
-      :src="recipe.image"
+      v-if="recipe.picture"
+      :src="recipe.picture"
       class="card-img-top recipe-image"
       alt="Recipe image"
     />
     <div class="card-body text-center">
-      <h5 class="card-title">{{ recipe.title }}</h5>
-      <p class="card-text">{{ recipe.readyInMinutes }} minutes</p>
-      <p class="card-text">{{ recipe.aggregateLikes }} likes</p>
+      <h5 class="card-title">{{ recipe.name }}</h5>
+      <p class="card-text">{{ recipe.timeToMake }}</p>
+      <p class="card-text">{{ recipe.popularity }} likes</p>
     </div>
   </div>
 </template>
