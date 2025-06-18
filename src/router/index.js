@@ -28,6 +28,35 @@ const routes = [
     component: () => import("../pages/RecipeViewPage.vue"),
   },
   {
+    path: "/about",
+    name: "about",
+    component: () => import("../pages/AboutPage.vue"),
+  },
+  {
+    path: "/create-recipe",
+    name: "createRecipe",
+    component: () => import("../pages/CreateRecipePage.vue"),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/favorite-recipes",
+    name: "favoriteRecipes",
+    component: () => import("../pages/FavoriteRecipesPage.vue"),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/my-recipes",
+    name: "myRecipes",
+    component: () => import("../pages/MyRecipesPage.vue"),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/family-recipes",
+    name: "familyRecipes",
+    component: () => import("../pages/FamilyRecipesPage.vue"),
+    meta: { requiresAuth: true }
+  },
+  {
     path: "/:catchAll(.*)",
     name: "notFound",
     component: NotFound,

@@ -81,6 +81,22 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
+
+// Navigation guards for protected routes
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // Check if user is logged in
+    if (!store.username) {
+      // Redirect to login if not logged in
+      next({ path: '/login', query: { redirect: to.fullPath } });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
 axios.defaults.baseURL = "http://localhost:3000";
 axios.defaults.withCredentials = true;
 const app = createApp(App);
