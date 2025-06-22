@@ -25,6 +25,7 @@
 import { reactive } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
+import store from '../store.js';
 
 export default {
   name: "LoginPage",
@@ -46,15 +47,17 @@ export default {
 
     const login = async () => {
       if (await v$.value.$validate()) {
-        // קריאה לשרת
         try {
-          await window.axios.post('/Login', {
+          const response = await window.axios.post('/Login', {
             username: state.username,
             password: state.password
           },{
             withCredentials: true  
           });
-          window.store.login(state.username);
+          // Expecting user_id in response.data.user_id
+          const user_id = response.data.user_id;
+          // window.store.login(state.username, user_id);
+          store.login(state.username, user_id);
           window.location.href = 'http://localhost:8080';
         } catch (err) {
           const message = err.response?.data?.message || err.message || "Unknown error";

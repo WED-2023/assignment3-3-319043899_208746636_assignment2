@@ -1,5 +1,4 @@
-
-  <template>
+<template>
   <div class="container">
     <div v-if="recipe">
       <div class="recipe-header mt-3 mb-4">
@@ -24,6 +23,14 @@
               {{ ingredient }}
             </li>
           </ul>
+        </div>
+        <div class="mb-3">
+          <strong>Instructions:</strong>
+          <ol>
+            <li v-for="(instruction, idx) in recipe.instructions" :key="idx">
+              {{ instruction }}
+            </li>
+          </ol>
         </div>
       </div>
     </div>
@@ -52,10 +59,12 @@
           switch (sourceType) {
             case "random":
               _recipe = this.$root.store.randomRecipes?.find(r => r.recipe_id === recipeId);
+              console.log("Random recipe:", _recipe);
               break;
 
             case "lastViewed":
               _recipe = this.$root.store.lastViewedRecipes?.find(r => r.recipe_id === recipeId);
+              console.log("Last viewed recipe:", _recipe);
               break;
 
             // case "search":
@@ -71,21 +80,19 @@
               break;
           }   
           if (_recipe) {
-                // this.recipe = {
-                //   ..._recipe,
-                //   _instructions: _recipe.analyzedInstructions
-                //     ?.map((fstep) => {
-                //       if (fstep.steps.length > 0) {
-                //         fstep.steps[0].step = fstep.name + fstep.steps[0].step;
-                //       }
-                //       return fstep.steps;
-                //     })
-                //     .reduce((a, b) => [...a, ...b], []),
-                // };
-                // return;
-                this.recipe=_recipe;
-
-              }
+            // Extract instructions from analyzedInstructions
+            let instructions = [];
+            if (_recipe.analyzedInstructions && Array.isArray(_recipe.analyzedInstructions)) {
+              instructions = _recipe.analyzedInstructions
+                .map(fstep => fstep.steps)
+                .reduce((a, b) => [...a, ...b], [])
+                .map(step => step.step);
+            }
+            this.recipe = {
+              ..._recipe,
+              instructions
+            };
+          }
           console.log("Recipe found in store:", this.recipe);
 
 
@@ -114,4 +121,3 @@
   
   } */
   </style>
-  
