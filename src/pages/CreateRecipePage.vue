@@ -6,22 +6,46 @@
         <form @submit.prevent="createRecipe">
           <div class="mb-3">
             <label for="recipeTitle" class="form-label">Recipe Title</label>
-            <input type="text" class="form-control" id="recipeTitle" v-model="recipe.title" required>
+            <input type="text" class="form-control" id="recipeTitle" v-model="recipe.name" required>
           </div>
           
           <div class="mb-3">
             <label for="recipeImage" class="form-label">Image URL</label>
-            <input type="url" class="form-control" id="recipeImage" v-model="recipe.image">
+            <input type="url" class="form-control" id="recipeImage" v-model="recipe.picture">
           </div>
           
           <div class="mb-3">
             <label for="recipeTime" class="form-label">Cooking Time (minutes)</label>
-            <input type="number" class="form-control" id="recipeTime" v-model="recipe.readyInMinutes" required>
+            <input type="number" class="form-control" id="recipeTime" v-model="recipe.timeToMake" required>
           </div>
           
           <div class="mb-3">
-            <label for="recipeServings" class="form-label">Servings</label>
-            <input type="number" class="form-control" id="recipeServings" v-model="recipe.servings" required>
+            <label for="recipeServings" class="form-label">dishes</label>
+            <input type="number" class="form-control" id="recipeServings" v-model="recipe.dishes" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="dietCategory" class="form-label">Diet Category</label>
+            <select class="form-control" id="dietCategory" v-model="recipe.dietCategory" required>
+              <option value="none">None</option>
+              <option value="vegan">Vegan</option>
+              <option value="vegetarian">Vegetarian</option>
+            </select>
+          </div>
+
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="isGlutenFree" v-model="recipe.isGlutenFree">
+            <label class="form-check-label" for="isGlutenFree">Gluten Free</label>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" v-model="recipe.description" rows="2" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="cuisine" class="form-label">Cuisine</label>
+            <input type="text" class="form-control" id="cuisine" v-model="recipe.cuisine" required>
           </div>
           
           <div class="mb-3">
@@ -34,8 +58,12 @@
           </div>
           
           <div class="mb-3">
-            <label for="recipeInstructions" class="form-label">Instructions</label>
-            <textarea class="form-control" id="recipeInstructions" rows="5" v-model="recipe.instructions" required></textarea>
+            <label class="form-label">Instructions</label>
+            <div v-for="(instruction, idx) in instructions" :key="idx" class="d-flex mb-2">
+              <textarea class="form-control me-2" v-model="instructions[idx]" rows="2" placeholder="Step description" required></textarea>
+              <button type="button" class="btn btn-danger" @click="removeInstruction(idx)">Remove</button>
+            </div>
+            <button type="button" class="btn btn-secondary" @click="addInstruction">Add Step</button>
           </div>
           
           <button type="submit" class="btn btn-primary">Create Recipe</button>
@@ -51,13 +79,17 @@ export default {
   data() {
     return {
       recipe: {
-        title: "",
-        image: "",
-        readyInMinutes: null,
-        servings: null,
+        name: "",
+        picture: "",
+        timeToMake: null,
+        dishes: null,
         ingredients: [""],
-        instructions: ""
-      }
+        dietCategory: "none",
+        isGlutenFree: false,
+        description: "",
+        cuisine: ""
+      },
+      instructions: [""]
     };
   },
   methods: {
@@ -70,10 +102,47 @@ export default {
         this.recipe.ingredients.push("");
       }
     },
-    createRecipe() {
-      alert("Recipe creation functionality will be implemented in the future");
-      // To be implemented: API call to save the recipe
-      this.$router.push("/my-recipes");
+    addInstruction() {
+      this.instructions.push("");
+    },
+    removeInstruction(index) {
+      this.instructions.splice(index, 1);
+      if (this.instructions.length === 0) {
+        this.instructions.push("");
+      }
+    },
+    async createRecipe() {
+      const user_id = sessionStorage.getItem('user_id');
+      const analyzedInstructions = [
+        {
+          name: "",
+          steps: this.instructions
+            .filter(step => step.trim() !== "")
+            .map((step, idx) => ({
+              number: idx + 1,
+              step: step,
+              ingredients: [],
+              equipment: []
+            }))
+        }
+      ];
+      const recipeToSave = {
+        ...this.recipe,
+        analyzedInstructions,
+        created_by: user_id
+      };
+      try {
+        console.log("Recipe to save:", recipeToSave);
+        await this.axios.post(
+          "http://localhost:3000/users/recipes",
+          recipeToSave,
+          { withCredentials: true }
+        );
+
+        this.$router.push("/my-recipes");
+      } catch (error) {
+        alert(error.response?.data?.message || error.message);
+      }
     }
   }
 };

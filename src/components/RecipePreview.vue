@@ -16,15 +16,15 @@
       <p class="card-text mb-1">
         <strong>Watched:</strong>
         <span :class="['icon-indicator', recipe.isWatched ? 'watched' : 'not-watched']">
-          <i v-if="recipe.isWatched" class="bi bi-eye-fill"></i>
-          <i v-else class="bi bi-eye-slash"></i>
+          <span v-if="recipe.isWatched">👁️</span>
+          <span v-else>🙈</span>
         </span>
       </p>
       <p class="card-text mb-1">
         <strong>Favorite:</strong>
         <span :class="['icon-indicator', recipe.isFavorite ? 'favorite' : 'not-favorite']">
-          <i v-if="recipe.isFavorite" class="bi bi-heart-fill"></i>
-          <i v-else class="bi bi-heart"></i>
+          <span v-if="recipe.isFavorite">❤️</span>
+          <span v-else>🤍</span>
         </span>
       </p>
     </div>
@@ -48,6 +48,7 @@ export default {
   methods: {
     async handleClick() {
       try{
+        console.log("Recipe clicked:", this.recipe.recipe_id);
       await window.axios.post("http://localhost:3000/users/lastViews", {
       recipeId: this.recipe.recipe_id
       }, { withCredentials: true });
