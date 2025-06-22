@@ -78,7 +78,7 @@ export default {
   methods: {
     logout() {
       store.logout();
-      this.$router.push("/login");
+      window.location.href = '/';
     }
   }
 }

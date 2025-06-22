@@ -1,9 +1,10 @@
-import { createApp, reactive } from 'vue';
+import { createApp} from 'vue';
 import App from './App.vue';
 import routes from './router/index';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import { createRouter, createWebHistory } from 'vue-router';
+import store from './store.js';
 
 // Bootstrap CSS + JS
 import 'bootstrap/dist/css/bootstrap.css';
@@ -20,22 +21,18 @@ const router = createRouter({
   routes
 });
 
-// Shared store
-const store = reactive({
-  username: localStorage.getItem('username'),
-  server_domain: 'http://localhost:3000',
-  randomRecipes : {},
-  lastViewedRecipes : {},
-  login(username) {
-    localStorage.setItem('username', username);
-    this.username = username;
-    console.log('login', this.username);
-  },
-  logout() {
-    console.log('logout');
-    localStorage.removeItem('username');
-    this.username = undefined;
-  },
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // Check if user is logged in
+    if (!store.username) {
+      // Redirect to login if not logged in
+      next({ path: '/login', query: { redirect: to.fullPath } });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 // Axios interceptors

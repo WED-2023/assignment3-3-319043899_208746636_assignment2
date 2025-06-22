@@ -1,13 +1,18 @@
 <template>
   <div class="container">
     <h3>{{ title }}</h3>
-    <div v-if="recipes.length === 0" class="text-center text-muted">
-      No recipes to show.
+    <div v-if="type === 'lastViewed' && !isLoggedIn">
+      <LoginPage />
     </div>
+    <div v-else>
+      <div v-if="recipes.length === 0" class="text-center text-muted">
+        No recipes to show.
+      </div>
 
-    <div class="row">
-      <div class="col" v-for="r in recipes" :key="r.recipe_id">
-        <RecipePreview class="recipePreview"  :sourceType="this.type" :recipe="r" />
+      <div class="row">
+        <div class="col" v-for="r in recipes" :key="r.recipe_id">
+          <RecipePreview class="recipePreview" :sourceType="type" :recipe="r" />
+        </div>
       </div>
     </div>
   </div>
@@ -15,11 +20,13 @@
 
 <script>
 import RecipePreview from "./RecipePreview.vue";
+import LoginPage from "../pages/LoginPage.vue";
 
 export default {
   name: "RecipePreviewList",
   components: {
     RecipePreview,
+    LoginPage,
   },
   props: {
     title: {
@@ -27,36 +34,42 @@ export default {
       required: true,
     },
     type: {
-       type: String, 
-       default: "random"
-    }
+      type: String,
+      default: "random",
+    },
   },
   data() {
     return {
       recipes: [],
     };
   },
+  computed: {
+    isLoggedIn() {
+      console.log("Checking login status:", this.$root.store.username);
+      // Adjust according to your store logic
+      return this.$root.store.username;
+    },
+  },
   mounted() {
     this.updateRecipes();
   },
-methods: {
-  async updateRecipes() {
-    if (this.type === "lastViewed") {
-          try {
-        
-            const response = await this.axios.get("http://localhost:3000/users/lastViews", { withCredentials: true });
-            this.recipes = Array.isArray(response.data) ? response.data : (response.data.recipes || []);
-          } catch (error) {
-            console.log(error);
-            this.recipes = [];
-          }
-          console.log("Last viewed recipes:", this.recipes);
-          // Update the store with the last viewed recipes
-          this.$root.store.lastViewedRecipes = [...this.recipes];
+  methods: {
+    async updateRecipes() {
+      if (this.type === "lastViewed") {
+        if (!this.isLoggedIn) {
+          this.recipes = [];
+          return;
         }
-    else if (this.type === "random") {
-
-      //הקוד המקורי- כאשר יש נקודות בspoonacular//
+        try {
+          const response = await this.axios.get("http://localhost:3000/users/lastViews", { withCredentials: true });
+          this.recipes = Array.isArray(response.data) ? response.data : (response.data.recipes || []);
+        } catch (error) {
+          console.log(error);
+          this.recipes = [];
+        }
+        this.$root.store.lastViewedRecipes = [...this.recipes];
+      } else if (this.type === "random") {
+        //הקוד המקורי- כאשר יש נקודות בspoonacular//
 
     // try {
     //   const response = await this.axios.get(
@@ -158,10 +171,9 @@ methods: {
       },
     ];
         this.$root.store.randomRecipes = [...this.recipes];
-    }
-
+      }
+    },
   },
-}
 };
 </script>
 
