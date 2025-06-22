@@ -1,5 +1,6 @@
 <template>
-  <div class="card h-100">
+
+  <div class="card h-100 text-decoration-none" @click="handleClick">
     <img
       v-if="recipe.picture"
       :src="recipe.picture"
@@ -12,6 +13,7 @@
       <p class="card-text">{{ recipe.popularity }} likes</p>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -21,6 +23,29 @@ export default {
     recipe: {
       type: Object,
       required: true
+    },
+    sourceType:{
+      type: String,
+      default: "random"
+    }
+  },
+  methods: {
+    async handleClick() {
+      try{
+      await window.axios.post("http://localhost:3000/users/lastViews", {
+      recipeId: this.recipe.recipe_id
+      }, { withCredentials: true });
+      
+      this.$router.push({
+        path: `/recipe/${this.recipe.recipe_id}`,
+        query: { source: this.sourceType }
+      });
+
+
+    }catch(err) {
+      console.error("API call failed", err);
+      window.toast("Error", "Something went wrong while tracking the view", "danger");
+    }
     }
   }
 }

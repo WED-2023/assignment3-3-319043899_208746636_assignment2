@@ -1,107 +1,98 @@
-<template>
-    <div class="container">
-      <div v-if="recipe">
-        <div class="recipe-header mt-3 mb-4">
-          <h1>{{ recipe.title }}</h1>
-          <img :src="recipe.image" class="center" />
+
+  <template>
+  <div class="container">
+    <div v-if="recipe">
+      <div class="recipe-header mt-3 mb-4">
+        <h1>{{ recipe.name }}</h1>
+        <img :src="recipe.picture" class="center" alt="Recipe Image" />
+        <div class="mt-2 text-muted" v-html="recipe.description"></div>      </div>
+      <div class="recipe-body">
+        <div class="mb-3">
+          <strong>Cuisine:</strong> {{ recipe.cuisine }}<br>
+          <strong>Diet Category:</strong> {{ recipe.dietCategory }}<br>
+          <strong>Dishes:</strong> {{ recipe.dishes }}<br>
+          <strong>Time to Make:</strong> {{ recipe.timeToMake }} minutes<br>
+          <strong>Likes:</strong> {{ recipe.popularity }}<br>
+          <strong>Gluten Free:</strong> {{ recipe.isGlutenFree ? 'Yes' : 'No' }}<br>
+          <strong>Favorite:</strong> {{ recipe.isFavorite ? 'Yes' : 'No' }}<br>
+          <strong>Watched:</strong> {{ recipe.isWatched ? 'Yes' : 'No' }}<br>
         </div>
-        <div class="recipe-body">
-          <div class="wrapper">
-            <div class="wrapped">
-              <div class="mb-3">
-                <div>Ready in {{ recipe.readyInMinutes }} minutes</div>
-                <div>Likes: {{ recipe.aggregateLikes }} likes</div>
-              </div>
-              Ingredients:
-              <ul>
-                <li
-                  v-for="(r, index) in recipe.extendedIngredients"
-                  :key="index + '_' + r.id"
-                >
-                  {{ r.original }}
-                </li>
-              </ul>
-            </div>
-            <div class="wrapped">
-              Instructions:
-              <ol>
-                <li v-for="s in recipe._instructions" :key="s.number">
-                  {{ s.step }}
-                </li>
-              </ol>
-            </div>
-          </div>
+        <div class="mb-3">
+          <strong>Ingredients:</strong>
+          <ul>
+            <li v-for="(ingredient, idx) in recipe.ingredients" :key="idx">
+              {{ ingredient }}
+            </li>
+          </ul>
         </div>
-        <!-- <pre>
-        {{ $route.params }}
-        {{ recipe }}
-      </pre
-        > -->
       </div>
     </div>
-  </template>
+    <div v-else>
+      <p>Loading recipe...</p>
+    </div>
+  </div>
+</template>
   
   <script>
+//import { _ } from 'core-js';
+
   export default {
     data() {
       return {
         recipe: null
       };
     },
-    async created() {
-      try {
-        let response;
-        // response = this.$route.params.response;
-  
-        try {
-          response = await this.axios.get(
-            // "https://test-for-3-2.herokuapp.com/recipes/info",
-            this.$root.store.server_domain + "/recipes/info",
-            {
-              params: { id: this.$route.params.recipeId }
-            }
-          );
-  
-          // console.log("response.status", response.status);
-          if (response.status !== 200) this.$router.replace("/NotFound");
-        } catch (error) {
-          console.log("error.response.status", error.response.status);
+    async created(){
+        const recipeId = parseInt(this.$route.params.recipeId);
+        const sourceType = this.$route.query.source;
+
+        try{
+          let _recipe = null;
+
+          switch (sourceType) {
+            case "random":
+              _recipe = this.$root.store.randomRecipes?.find(r => r.recipe_id === recipeId);
+              break;
+
+            case "lastViewed":
+              _recipe = this.$root.store.lastViewedRecipes?.find(r => r.recipe_id === recipeId);
+              break;
+
+            // case "search":
+            //   _recipe = this.$root.store.searchResults?.find(r => r.recipe_id === recipeId);
+            //   break;
+
+            // case "user":
+            //   _recipe = this.$root.store.userRecipes?.find(r => r.recipe_id === recipeId);
+            //   break;
+
+            default:
+              console.warn("Unknown sourceType:", sourceType);
+              break;
+          }   
+          if (_recipe) {
+                // this.recipe = {
+                //   ..._recipe,
+                //   _instructions: _recipe.analyzedInstructions
+                //     ?.map((fstep) => {
+                //       if (fstep.steps.length > 0) {
+                //         fstep.steps[0].step = fstep.name + fstep.steps[0].step;
+                //       }
+                //       return fstep.steps;
+                //     })
+                //     .reduce((a, b) => [...a, ...b], []),
+                // };
+                // return;
+                this.recipe=_recipe;
+
+              }
+          console.log("Recipe found in store:", this.recipe);
+
+
+        }catch (error) {
+          console.error("Error fetching recipe:", error);
           this.$router.replace("/NotFound");
-          return;
         }
-  
-        let {
-          analyzedInstructions,
-          instructions,
-          extendedIngredients,
-          aggregateLikes,
-          readyInMinutes,
-          image,
-          title
-        } = response.data.recipe;
-  
-        let _instructions = analyzedInstructions
-          .map((fstep) => {
-            fstep.steps[0].step = fstep.name + fstep.steps[0].step;
-            return fstep.steps;
-          })
-          .reduce((a, b) => [...a, ...b], []);
-  
-        let _recipe = {
-          instructions,
-          _instructions,
-          analyzedInstructions,
-          extendedIngredients,
-          aggregateLikes,
-          readyInMinutes,
-          image,
-          title
-        };
-  
-        this.recipe = _recipe;
-      } catch (error) {
-        console.log(error);
-      }
     }
   };
   </script>

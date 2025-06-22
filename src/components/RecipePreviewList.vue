@@ -7,7 +7,7 @@
 
     <div class="row">
       <div class="col" v-for="r in recipes" :key="r.recipe_id">
-        <RecipePreview class="recipePreview" :recipe="r" />
+        <RecipePreview class="recipePreview"  :sourceType="this.type" :recipe="r" />
       </div>
     </div>
   </div>
@@ -43,30 +43,33 @@ methods: {
   async updateRecipes() {
     if (this.type === "lastViewed") {
           try {
+        
             const response = await this.axios.get("http://localhost:3000/users/lastViews", { withCredentials: true });
-            console.log("API response:", response.data);
             this.recipes = Array.isArray(response.data) ? response.data : (response.data.recipes || []);
           } catch (error) {
             console.log(error);
             this.recipes = [];
           }
+          console.log("Last viewed recipes:", this.recipes);
+          // Update the store with the last viewed recipes
+          this.$root.store.lastViewedRecipes = [...this.recipes];
         }
     else if (this.type === "random") {
 
       //הקוד המקורי- כאשר יש נקודות בspoonacular//
-    /*
-    try {
-      const response = await this.axios.get(
-        this.$root.store.server_domain + "/recipes/random"
-      );
-      console.log("API response:", response.data);
-      const recipes = response.data.recipes;
-      this.recipes = [];
-      this.recipes.push(...recipes);
-    } catch (error) {
-      console.log(error);
-    }
-    */
+
+    // try {
+    //   const response = await this.axios.get(
+    //     this.$root.store.server_domain + "/recipes/random"
+    //   );
+    //   console.log("API response:", response.data);
+    //   const recipes = response.data;
+    //   this.recipes = [];
+    //   this.recipes.push(...recipes);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
 
     //when there are no points in spoonacular, we use the following code://
     this.recipes = [
@@ -80,7 +83,7 @@ methods: {
         isGlutenFree: false,
         created_by: null,
         description:
-          "Peanut Butter and Apple Oatmeal Breakfast Bars takes around <b>45 minutes</b> from beginning to end...",
+          "If you want to add more <b>gluten free, dairy free, paleolithic, and primal</b> recipes to your recipe box, Marinated Boquerones might be a recipe you should try. For <b>$3.76 per serving</b>, you get a main course that serves 6. One serving contains <b>352 calories</b>, <b>34g of protein</b>, and <b>22g of fat</b>. A mixture of thyme, olive oil extra vergine, coarse sea salt, and a handful of other ingredients are all it takes to make this recipe so flavorful. 6 people were glad they tried this recipe. It is brought to you by Delicious Days. From preparation to the plate, this recipe takes approximately <b>45 minutes</b>. Taking all factors into account, this recipe <b>earns a spoonacular score of 87%</b>, which is tremendous. If you like this recipe, you might also like recipes such as <a href=\"https://spoonacular.com/recipes/asian-marinated-chicken-thighs-632848\">Asian Marinated Chicken Thighs</a>, <a href=\"https://spoonacular.com/recipes/asian-marinated-eggplant-632849\">Asian Marinated Eggplant</a>, and <a href=\"https://spoonacular.com/recipes/balsamic-marinated-lamb-chops-633932\">Balsamic Marinated Lamb Chops</a>.",
         ingredients: [
           "2 cups Quaker oats",
           "1/4 cup smooth peanut butter",
@@ -154,7 +157,9 @@ methods: {
         isFavorite: false
       },
     ];
+        this.$root.store.randomRecipes = [...this.recipes];
     }
+
   },
 }
 };
