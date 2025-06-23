@@ -93,7 +93,7 @@ export default {
         "name": "Raw Carrot Cake",
         "picture": "https://img.spoonacular.com/recipes/657968-556x370.jpg",
         "timeToMake": "45 minutes",
-        "popularity": 2,
+        "popularity": 10,
         "dietCategory": "vegan",
         "isGlutenFree": true,
         "created_by": null,

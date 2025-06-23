@@ -3,25 +3,31 @@
     <h1 class="text-center mb-4">My Family Recipes</h1>
     <div class="row">
       <div class="col-12">
-        <div v-if="familyRecipes.length === 0" class="text-center">
-          <p>You haven't added any family recipes yet.</p>
-          <router-link to="/create-recipe" class="btn btn-primary">Add a Family Recipe</router-link>
-        </div>
-        <div v-else>
-          <RecipePreviewList :recipes="familyRecipes" />
-        </div>
+        <RecipesList
+          :recipes="familyRecipes"
+          sourceType="family"
+          :showCount="true"
+          noResultsMessage="You haven't added any family recipes yet."
+        >
+          <template #empty>
+            <div class="text-center">
+              <p>You haven't added any family recipes yet.</p>
+              <router-link to="/create-recipe" class="btn btn-primary">Add a Family Recipe</router-link>
+            </div>
+          </template>
+        </RecipesList>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import RecipePreviewList from "../components/RecipePreviewList.vue";
+import RecipesList from "../components/RecipesList.vue";
 
 export default {
   name: "FamilyRecipesPage",
   components: {
-    RecipePreviewList
+    RecipesList
   },
   data() {
     return {

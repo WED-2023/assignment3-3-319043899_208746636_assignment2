@@ -3,25 +3,31 @@
     <h1 class="text-center mb-4">My Favorite Recipes</h1>
     <div class="row">
       <div class="col-12">
-        <div v-if="favorites.length === 0" class="text-center">
-          <p>You haven't added any favorite recipes yet.</p>
-          <router-link to="/" class="btn btn-primary">Explore Recipes</router-link>
-        </div>
-        <div v-else>
-          <RecipePreviewList :recipes="favorites" />
-        </div>
+        <RecipesList
+          :recipes="favorites"
+          sourceType="favorite"
+          :showCount="true"
+          noResultsMessage="You haven't added any favorite recipes yet."
+        >
+          <template #empty>
+            <div class="text-center">
+              <p>You haven't added any favorite recipes yet.</p>
+              <router-link to="/" class="btn btn-primary">Explore Recipes</router-link>
+            </div>
+          </template>
+        </RecipesList>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import RecipePreviewList from "../components/RecipePreviewList.vue";
+import RecipesList from "../components/RecipesList.vue";
 
 export default {
   name: "FavoriteRecipesPage",
   components: {
-    RecipePreviewList
+    RecipesList
   },
   data() {
     return {
