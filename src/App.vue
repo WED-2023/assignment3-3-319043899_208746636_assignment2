@@ -1,17 +1,19 @@
 <template>
   <div id="app">
-    <NavBar />
+    <NavBar @open-create-recipe="openCreateModal" />
+    <CreateRecipePage ref="CreateRecipePage" />
     <router-view />
   </div>
 </template>
 
 <script>
 import NavBar from "./components/NavBar.vue";
+import CreateRecipePage from "./pages/CreateRecipePage.vue";
 import { getCurrentInstance } from 'vue';
 
 export default {
   name: "App",
-  components: { NavBar },
+  components: { NavBar, CreateRecipePage },
   setup() {
     const internalInstance = getCurrentInstance();
     const store = internalInstance.appContext.config.globalProperties.store;
@@ -25,8 +27,13 @@ export default {
     };
 
     return { store, logout };
+  },
+  methods: {
+    openCreateModal() {
+      this.$refs.CreateRecipePage?.show();
+    }
   }
-}
+};
 </script>
 
 <style lang="scss">

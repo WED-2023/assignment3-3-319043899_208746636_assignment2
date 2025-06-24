@@ -30,7 +30,7 @@
           
           <!-- For logged-in users only -->
           <li class="nav-item" v-if="username">
-            <router-link class="nav-link" to="/create-recipe">Create New</router-link>
+    <button class="nav-link btn btn-link" type="button" @click="$emit('open-create-recipe')">Create New</button>
           </li>
           
           <!-- Personal Area Dropdown (for logged-in users) -->

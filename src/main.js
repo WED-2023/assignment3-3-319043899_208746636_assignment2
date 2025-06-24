@@ -72,7 +72,7 @@ window.toast = app.config.globalProperties.toast = function (title, content, var
   }
 
   const toast = document.createElement("div");
-  toast.className = `toast align-items-center text-bg-${variant || 'info'} border-0 show`;
+  toast.className = `toast align-items-center bg-${variant || 'info'} text-white border-0 show`;
   toast.setAttribute("role", "alert");
   toast.setAttribute("aria-live", "assertive");
   toast.setAttribute("aria-atomic", "true");
