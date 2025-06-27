@@ -1,11 +1,12 @@
 <template>
 
-  <div class="card h-100 text-decoration-none" @click="handleClick">
+  <div class="card h-100 text-decoration-none">
     <img
       v-if="recipe.picture"
       :src="recipe.picture"
       class="card-img-top recipe-image clickable-image"
       alt="Recipe image"
+      @click="handleClick"
     />
     <div class="card-body text-center">
       <h5 class="card-title">{{ recipe.name }}</h5>
@@ -22,10 +23,16 @@
       </p>
       <p class="card-text mb-1">
         <strong>Favorite:</strong>
-        <span :class="['icon-indicator', recipe.isFavorite ? 'favorite' : 'not-favorite']">
-          <span v-if="recipe.isFavorite">❤️</span>
-          <span v-else>🤍</span>
-        </span>
+        <button
+          class="btn btn-link p-0 m-0 align-baseline favorite-btn"
+          @click.stop="toggleFavorite"
+          :aria-label="recipe.isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+        >
+          <span :class="recipe.isFavorite ? 'favorite' : 'not-favorite'">
+            <span v-if="recipe.isFavorite">❤️</span>
+            <span v-else>🤍</span>
+          </span>
+        </button>
       </p>
     </div>
   </div>
@@ -63,6 +70,22 @@ export default {
       console.error("API call failed", err);
       window.toast("Error", "Something went wrong while tracking the view", "danger");
     }
+    },
+    async toggleFavorite() {
+      // Check if user is logged in
+      const userId = sessionStorage.getItem('user_id');
+      if (!userId) {
+        window.toast("Error", "You have to log in to add recipes to favorites", "danger");
+        return;
+      }
+      try {
+        await window.axios.post("http://localhost:3000/users/favorites", {
+          recipeId: this.recipe.recipe_id
+        }, { withCredentials: true });
+        this.$emit('toggle-favorite', this.recipe.recipe_id);
+      } catch (err) {
+        window.toast("Error", "You have already added this recipe to your favorites ", "danger");
+      }
     }
   }
 }

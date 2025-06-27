@@ -11,7 +11,7 @@
 
       <div class="row">
         <div class="col" v-for="r in recipes" :key="r.recipe_id">
-          <RecipePreview class="recipePreview" :sourceType="type" :recipe="r" />
+          <RecipePreview class="recipePreview" :sourceType="type" :recipe="r"   @toggle-favorite="handleToggleFavorite" />
         </div>
       </div>
     </div>
@@ -622,6 +622,12 @@ export default {
         this.$root.store.randomRecipes = [...this.recipes];
       }
     },
+    handleToggleFavorite(recipeId) {
+      const recipe = this.recipes.find(r => r.recipe_id === recipeId);
+      if (recipe) {
+        recipe.isFavorite = !recipe.isFavorite;
+      }
+    }
   },
 };
 </script>

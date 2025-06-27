@@ -156,7 +156,8 @@ export default {
         this.resetForm();
         this.$router.push("/my-recipes");
       } catch (error) {
-        alert(error.response?.data?.message || error.message);
+          const message = error.response?.data?.message || error.message || "An error occurred";
+          this.$root.toast("Error", message, "danger");
       }
     }
   }

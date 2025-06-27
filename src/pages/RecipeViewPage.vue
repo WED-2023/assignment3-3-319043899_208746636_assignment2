@@ -13,7 +13,18 @@
           <strong>Time to Make:</strong> {{ recipe.timeToMake }} minutes<br>
           <strong>Likes:</strong> {{ recipe.popularity }}<br>
           <strong>Gluten Free:</strong> {{ recipe.isGlutenFree ? 'Yes' : 'No' }}<br>
-          <strong>Favorite:</strong> {{ recipe.isFavorite ? 'Yes' : 'No' }}<br>
+          <strong>Favorite:</strong>
+          <button
+            class="btn btn-link p-0 m-0 align-baseline favorite-btn"
+            @click="toggleFavorite"
+            :aria-label="recipe.isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+          >
+            <span :class="recipe.isFavorite ? 'favorite' : 'not-favorite'">
+              <span v-if="recipe.isFavorite">❤️</span>
+              <span v-else>🤍</span>
+            </span>
+          </button>
+          <br>
           <strong>Watched:</strong> {{ recipe.isWatched ? 'Yes' : 'No' }}<br>
         </div>
         <div class="mb-3">
@@ -100,6 +111,23 @@
           console.error("Error fetching recipe:", error);
           this.$router.replace("/NotFound");
         }
+    },
+    methods: {
+      async toggleFavorite() {
+        const userId = sessionStorage.getItem('user_id');
+        if (!userId) {
+          window.toast("Error", "You have to log in to add recipes to favorites", "danger");
+          return;
+        }
+        try {
+          await window.axios.post("http://localhost:3000/users/favorites", {
+            recipeId: this.recipe.recipe_id
+          }, { withCredentials: true });
+          this.recipe.isFavorite = !this.recipe.isFavorite;
+        } catch (err) {
+          window.toast("Error", "You have already added this recipe to your favorites", "danger");
+        }
+      },
     }
   };
   </script>
