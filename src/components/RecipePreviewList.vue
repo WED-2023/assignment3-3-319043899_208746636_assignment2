@@ -72,7 +72,6 @@ export default {
         this.$root.store.lastViewedRecipes = [...this.recipes];
         sessionStorage.setItem('lastViewedRecipes', JSON.stringify(this.recipes));
       } else if (this.type === "random") {
-        //הקוד המקורי- כאשר יש נקודות בspoonacular//
 
     // try {
     //   const response = await this.axios.get(

@@ -1,141 +1,102 @@
 <template>
-  <div>
-    <!-- Optional Title -->
-    <h2 v-if="title" class="mb-4">{{ title }} <span v-if="showCount">({{ recipes.length }})</span></h2>
-    
-    <!-- No Results Message -->
-    <div v-if="recipes.length === 0">
-      <slot name="empty">
-        <div class="text-center text-muted my-5">
-          {{ noResultsMessage }}
-        </div>
-      </slot>
+  <div class="recipes-list">
+    <!-- Title & Count Section (optional) -->
+    <div v-if="showCount && recipes.length > 0" class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">{{ title }} <span class="badge bg-secondary ms-2">{{ recipes.length }}</span></h2>
+      <slot name="actions"></slot>
     </div>
 
-    <!-- Recipe Grid -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      <div class="col" v-for="recipe in displayedRecipes" :key="recipe.recipe_id">
-        <RecipePreview class="recipePreview" :sourceType="sourceType" :recipe="recipe" />
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
+      <p class="mt-2">Loading recipes...</p>
     </div>
+    
+    <!-- Content Section -->
+    <template v-else>
+      <!-- Grid of Recipes -->
+      <div v-if="recipes.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div v-for="recipe in recipes" :key="recipe.recipe_id" class="col">
+          <RecipePreview :recipe="recipe" :sourceType="sourceType" />
+        </div>
+      </div>
 
-    <!-- Pagination controls -->
-    <div v-if="recipes.length > recipesPerPage" class="d-flex justify-content-center mt-4">
-      <nav :aria-label="`${sourceType} pagination`">
-        <ul class="pagination">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: page === currentPage }">
-            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-          </li>
-          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-            <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+      <!-- Empty State -->
+      <div v-else class="text-center my-5 p-5 bg-light rounded">
+        <slot name="empty">
+          <i class="bi bi-clipboard-x fs-1 text-muted"></i>
+          <h3 class="mt-3">No recipes found</h3>
+          <p class="text-muted">{{ noResultsMessage }}</p>
+        </slot>
+      </div>
+    </template>
   </div>
 </template>
 
-<script>
-import RecipePreview from "./RecipePreview.vue";
+<script setup>
+import RecipePreview from './RecipePreview.vue';
 
-export default {
-  name: "RecipesList",
-  components: {
-    RecipePreview,
+defineProps({
+  // The array of recipe objects to display
+  recipes: {
+    type: Array,
+    required: true,
+    default: () => []
   },
-  props: {
-    // Recipe data
-    recipes: {
-      type: Array,
-      required: true,
-    },
-    // Display options
-    title: {
-      type: String,
-      default: ""
-    },
-    sourceType: {
-      type: String,
-      default: "search"
-    },
-    showCount: {
-      type: Boolean,
-      default: false
-    },
-    noResultsMessage: {
-      type: String,
-      default: "No recipes to show."
-    },
-    // Pagination options
-    recipesPerPage: {
-      type: Number,
-      default: 6,
-    },
-    showPagination: {
-      type: Boolean,
-      default: true
-    }
+  // Loading state
+  loading: {
+    type: Boolean,
+    default: false
   },
-  data() {
-    return {
-      currentPage: 1,
-    };
+  // Optional title for the recipes list
+  title: {
+    type: String,
+    default: 'Recipes'
   },
-  computed: {
-    totalPages() {
-      return Math.ceil(this.recipes.length / this.recipesPerPage);
-    },
-    displayedRecipes() {
-      if (!this.showPagination) {
-        return this.recipes;
-      }
-      const start = (this.currentPage - 1) * this.recipesPerPage;
-      const end = start + this.recipesPerPage;
-      return this.recipes.slice(start, end);
-    },
+  // Whether to show the count badge
+  showCount: {
+    type: Boolean,
+    default: false
   },
-  watch: {
-    recipes() {
-      // Reset to first page when recipes change
-      this.currentPage = 1;
-    }
+  // Source type for recipe actions (e.g., "search", "favorite", "family")
+  sourceType: {
+    type: String,
+    default: "general"
   },
-  methods: {
-    changePage(page) {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-        // Scroll to top of results
-        window.scrollTo({
-          top: this.$el.offsetTop - 100,
-          behavior: "smooth"
-        });
-        // Emit event for parent components that might need to know about page changes
-        this.$emit('page-changed', page);
-      }
-    }
+  // Message to show when there are no recipes
+  noResultsMessage: {
+    type: String,
+    default: "No recipes are available."
   }
-};
+});
 </script>
 
 <style scoped>
-.page-link {
-  color: #d1925e;
+.recipes-list {
+  margin-bottom: 2rem;
 }
 
-.page-item.active .page-link {
-  background-color: #d1925e;
-  border-color: #d1925e;
-  color: white;
+h2 {
+  font-weight: 600;
+  color: #333;
 }
 
-.page-link:focus {
-  box-shadow: 0 0 0 0.25rem rgba(209, 146, 94, 0.25);
+.badge {
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.4em 0.8em;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+  border-radius: 1rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
 }
 </style>
