@@ -70,6 +70,7 @@ export default {
           this.recipes = [];
         }
         this.$root.store.lastViewedRecipes = [...this.recipes];
+        sessionStorage.setItem('lastViewedRecipes', JSON.stringify(this.recipes));
       } else if (this.type === "random") {
         //הקוד המקורי- כאשר יש נקודות בspoonacular//
 
@@ -620,12 +621,29 @@ export default {
         }
     ]
         this.$root.store.randomRecipes = [...this.recipes];
+        sessionStorage.setItem('randomRecipes', JSON.stringify(this.recipes));
+      } else if (this.type === "favorite") {
+        // Fetch favorite recipes from API
+        try {
+          const response = await this.axios.get("http://localhost:3000/users/favorites", { withCredentials: true });
+          this.recipes = Array.isArray(response.data) ? response.data : (response.data.recipes || []);
+        } catch (error) {
+          console.log(error);
+          this.recipes = [];
+        }
+        this.$root.store.favoriteRecipes = [...this.recipes];
+        sessionStorage.setItem('favoriteRecipes', JSON.stringify(this.recipes));
       }
     },
     handleToggleFavorite(recipeId) {
       const recipe = this.recipes.find(r => r.recipe_id === recipeId);
       if (recipe) {
         recipe.isFavorite = !recipe.isFavorite;
+        if (this.type === "lastViewed") {
+          sessionStorage.setItem('lastViewedRecipes', JSON.stringify(this.recipes));
+        } else if (this.type === "random") {
+          sessionStorage.setItem('randomRecipes', JSON.stringify(this.recipes));
+        }
       }
     }
   },

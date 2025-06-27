@@ -67,16 +67,52 @@
         try{
           let _recipe = null;
 
+          // Load from sessionStorage if store is empty or not an array
+          if (!Array.isArray(this.$root.store.randomRecipes) || this.$root.store.randomRecipes.length === 0) {
+            const randomFromSession = sessionStorage.getItem('randomRecipes');
+            if (randomFromSession) {
+              this.$root.store.randomRecipes = JSON.parse(randomFromSession);
+            } else {
+              this.$root.store.randomRecipes = [];
+            }
+          }
+          if (!Array.isArray(this.$root.store.lastViewedRecipes) || this.$root.store.lastViewedRecipes.length === 0) {
+            const lastViewedFromSession = sessionStorage.getItem('lastViewedRecipes');
+            if (lastViewedFromSession) {
+              this.$root.store.lastViewedRecipes = JSON.parse(lastViewedFromSession);
+            } else {
+              this.$root.store.lastViewedRecipes = [];
+            }
+          }
+
           switch (sourceType) {
-            case "random":
-              _recipe = this.$root.store.randomRecipes?.find(r => r.recipe_id === recipeId);
+            case "random": {
+              const randomArr = Array.isArray(this.$root.store.randomRecipes) ? this.$root.store.randomRecipes : [];
+              _recipe = randomArr.find(r => r.recipe_id === recipeId);
               console.log("Random recipe:", _recipe);
               break;
-
-            case "lastViewed":
-              _recipe = this.$root.store.lastViewedRecipes?.find(r => r.recipe_id === recipeId);
+            }
+            case "lastViewed": {
+              const lastViewedArr = Array.isArray(this.$root.store.lastViewedRecipes) ? this.$root.store.lastViewedRecipes : [];
+              _recipe = lastViewedArr.find(r => r.recipe_id === recipeId);
               console.log("Last viewed recipe:", _recipe);
               break;
+            }
+            case "favorite": {
+              // Defensive: ensure favoriteRecipes is an array
+              if (!Array.isArray(this.$root.store.favoriteRecipes) || this.$root.store.favoriteRecipes.length === 0) {
+                const favFromSession = sessionStorage.getItem('favoriteRecipes');
+                if (favFromSession) {
+                  this.$root.store.favoriteRecipes = JSON.parse(favFromSession);
+                } else {
+                  this.$root.store.favoriteRecipes = [];
+                }
+              }
+              const favoriteArr = Array.isArray(this.$root.store.favoriteRecipes) ? this.$root.store.favoriteRecipes : [];
+              _recipe = favoriteArr.find(r => r.recipe_id === recipeId);
+              console.log("Favorite recipe:", _recipe);
+              break;
+            }
 
             // case "search":
             //   _recipe = this.$root.store.searchResults?.find(r => r.recipe_id === recipeId);
