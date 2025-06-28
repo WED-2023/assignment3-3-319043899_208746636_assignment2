@@ -55,21 +55,28 @@ export default {
   methods: {
     async handleClick() {
       try{
-        console.log("Recipe clicked:", this.recipe.recipe_id);
       await window.axios.post("http://localhost:3000/users/lastViews", {
       recipeId: this.recipe.recipe_id
       }, { withCredentials: true });
+
+      if (this.sourceType==="favorite"){
+        sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
+      }
+      else if (this.sourceType === "MyRecipes"){
+        sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
+      }
       
       this.$router.push({
         path: `/recipe/${this.recipe.recipe_id}`,
         query: { source: this.sourceType }
       });
 
-
     }catch(err) {
       console.error("API call failed", err);
       window.toast("Error", "Something went wrong while tracking the view", "danger");
     }
+
+
     },
     async toggleFavorite() {
       // Check if user is logged in

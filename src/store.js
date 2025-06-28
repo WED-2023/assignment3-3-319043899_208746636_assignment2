@@ -5,9 +5,7 @@ const store = reactive({
   server_domain: 'http://localhost:3000',
   randomRecipes : {},
   lastViewedRecipes : {},
-  favoriteRecipes: {},
   login(username,user_id) {
-    // localStorage.setItem('username', username);
     console.log('login details: ', username, user_id);
     sessionStorage.setItem('username', username);
     sessionStorage.setItem('user_id', user_id);
@@ -16,7 +14,6 @@ const store = reactive({
   },
   logout() {
     console.log('logout');
-    // localStorage.removeItem('username');
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('user_id');
     this.username = undefined;
