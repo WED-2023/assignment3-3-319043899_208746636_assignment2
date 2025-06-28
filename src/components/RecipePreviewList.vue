@@ -55,6 +55,7 @@ export default {
   },
   methods: {
     async updateRecipes() {
+        console.log("Updating recipes for type:", this.type);
       if (this.type === "lastViewed") {
         if (!this.isLoggedIn) {
           this.recipes = [];
@@ -71,6 +72,7 @@ export default {
         }
         this.$root.store.lastViewedRecipes = [...this.recipes];
         sessionStorage.setItem('lastViewedRecipes', JSON.stringify(this.recipes));
+
       } else if (this.type === "random") {
 
     // try {
@@ -621,6 +623,7 @@ export default {
     ]
         this.$root.store.randomRecipes = [...this.recipes];
         sessionStorage.setItem('randomRecipes', JSON.stringify(this.recipes));
+
       } else if (this.type === "favorite") {
         // Fetch favorite recipes from API
         try {
@@ -630,8 +633,27 @@ export default {
           console.log(error);
           this.recipes = [];
         }
-        this.$root.store.favoriteRecipes = [...this.recipes];
-        sessionStorage.setItem('favoriteRecipes', JSON.stringify(this.recipes));
+        // this.$root.store.favoriteRecipes = [...this.recipes];
+        // sessionStorage.setItem('favoriteRecipes', JSON.stringify(this.recipes));
+      }
+      
+      else if (this.type === "MyRecipes"){
+        // Fetch user recipes from API
+        try {
+          const response = await this.axios.get("http://localhost:3000/users/myrecipes", { withCredentials: true });
+          console.log("User recipes response:", response.data);
+          this.recipes = Array.isArray(response.data) ? response.data : (response.data.recipes || []);
+        } catch (error) {
+          console.log(error);
+          this.recipes = [];
+        }
+        // this.$root.store.userRecipes = [...this.recipes];
+        // sessionStorage.setItem('userRecipes', JSON.stringify(this.recipes));
+      }
+      
+      else {
+        console.warn("Unknown type:", this.type);
+        this.recipes = [];
       }
     },
     handleToggleFavorite(recipeId) {

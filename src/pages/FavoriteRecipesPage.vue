@@ -11,7 +11,6 @@
 
 <script>
 import RecipePreviewList from "@/components/RecipePreviewList.vue";
-//import RecipesList from "../components/RecipesList.vue";
 
 export default {
   name: "FavoriteRecipesPage",
