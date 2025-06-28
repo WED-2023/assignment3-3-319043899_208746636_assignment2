@@ -99,9 +99,27 @@
               break;
             }
 
-            // case "search":
-            //   _recipe = this.$root.store.searchResults?.find(r => r.recipe_id === recipeId);
-            //   break;
+            case "search": {
+              // Defensive: ensure searchRecipes is an array
+              if (!window.store.searchRecipes || !Array.isArray(window.store.searchRecipes)) {
+                const searchFromSession = sessionStorage.getItem('searchRecipes');
+                if (searchFromSession) {
+                  window.store.searchRecipes = JSON.parse(searchFromSession);
+                } else {
+                  window.store.searchRecipes = [];
+                }
+              }
+              _recipe = window.store.searchRecipes.find(r => r.recipe_id === recipeId);
+              console.log("Search recipe:", _recipe);
+              break;
+            }
+              
+            case "user": {
+              if (window.store.userRecipes && Array.isArray(window.store.userRecipes)) {
+                _recipe = window.store.userRecipes.find(r => r.recipe_id === recipeId);
+              }
+              break;
+            }
 
             case "MyRecipes":{
                 const recipeFromSession = sessionStorage.getItem('currentRecipe');

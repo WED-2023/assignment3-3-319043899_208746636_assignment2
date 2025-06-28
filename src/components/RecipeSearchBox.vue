@@ -117,13 +117,14 @@ const state = reactive({
           state.recipes = [];
           state.recipes.push(...recipes);
           console.log("search recipes:", state.recipes);
+          window.store.searchRecipes = [...state.recipes];
+          sessionStorage.setItem('searchRecipes', JSON.stringify(state.recipes));
           emit('results-found', [...state.recipes]);
           
           if(recipes.length === 0) {
             window.toast("Search Results", "No recipes found matching your criteria", "info");
           }
-          window.store.searchRecipes = [...state.recipes];
-          sessionStorage.setItem('searchRecipes', JSON.stringify(state.recipes));
+         
         } catch (err) {
           window.toast("Search Error", "Failed to fetch recipes. Please try again.", "danger");
           console.log("Error searching recipes:", err);
