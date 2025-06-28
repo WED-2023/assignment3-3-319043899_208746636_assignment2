@@ -54,10 +54,23 @@ export default {
   },
   methods: {
     async handleClick() {
-      try{
-      await window.axios.post("http://localhost:3000/users/lastViews", {
-      recipeId: this.recipe.recipe_id
-      }, { withCredentials: true });
+      try {
+        console.log("Recipe clicked:", this.recipe.recipe_id);
+        
+        // Check if user is logged in before tracking view
+        const userId = sessionStorage.getItem('user_id');
+        
+        if (userId) {
+          // Only track view if user is logged in
+          try {
+            await window.axios.post("http://localhost:3000/users/lastViews", {
+              recipeId: this.recipe.recipe_id
+            }, { withCredentials: true });
+          } catch (trackError) {
+            console.error("Failed to track view:", trackError);
+            // Don't show error toast to user, just log it
+          }
+        }
 
       if (this.sourceType==="favorite"){
         sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
