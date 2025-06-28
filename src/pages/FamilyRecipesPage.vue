@@ -9,6 +9,7 @@
           :showCount="true"
           title="Family Recipes"
           noResultsMessage="You haven't added any family recipes yet."
+          @update-recipe="updateFamilyRecipe"
         >
           <template #empty>
             <i class="bi bi-book fs-1 text-muted"></i>
@@ -56,6 +57,31 @@ export default {
         aggregateLikes: 98
       }
     ];
+  },
+  methods: {
+    // Handle recipe updates (e.g. from favorite toggle)
+    updateFamilyRecipe(updatedRecipe) {
+      const index = this.familyRecipes.findIndex(recipe => 
+        recipe.id === updatedRecipe.id || recipe.recipe_id === updatedRecipe.recipe_id
+      );
+      
+      if (index !== -1) {
+        // Update the recipe in our local array
+        this.familyRecipes[index] = updatedRecipe;
+        console.log(`Updated family recipe ${updatedRecipe.id || updatedRecipe.recipe_id}`);
+        
+        // Update in session storage
+        const familyRecipes = JSON.parse(sessionStorage.getItem('familyRecipes') || '[]');
+        const storageIndex = familyRecipes.findIndex(recipe => 
+          recipe.id === updatedRecipe.id || recipe.recipe_id === updatedRecipe.recipe_id
+        );
+        
+        if (storageIndex !== -1) {
+          familyRecipes[storageIndex] = updatedRecipe;
+          sessionStorage.setItem('familyRecipes', JSON.stringify(familyRecipes));
+        }
+      }
+    }
   }
 };
 </script>

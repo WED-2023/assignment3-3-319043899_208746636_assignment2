@@ -29,6 +29,7 @@
         :showCount="true"
         sourceType="search"
         noResultsMessage="Try different search terms or filters"
+        @update-recipe="updateRecipe"
       >
         <template #empty>
           <i class="bi bi-search fs-1 text-muted"></i>
@@ -65,6 +66,19 @@ const handleResults = (searchResults) => {
   
   // Log the search results for debugging
   console.log(`Received ${searchResults.length} search results`);
+};
+
+// Handle recipe updates (e.g. from favorite toggle)
+const updateRecipe = (updatedRecipe) => {
+  const index = recipes.value.findIndex(
+    recipe => recipe.recipe_id === updatedRecipe.recipe_id
+  );
+  
+  if (index !== -1) {
+    // Update the recipe in our local array
+    recipes.value[index] = updatedRecipe;
+    console.log(`Updated recipe ${updatedRecipe.recipe_id} in search results`);
+  }
 };
 
 
