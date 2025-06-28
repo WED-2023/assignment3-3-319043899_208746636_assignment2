@@ -27,7 +27,7 @@
       <div class="col-md-3 mb-3">
         <label for="recipesNum" class="form-label fw-bold">Number of results:</label>
         <select class="form-select rounded-pill px-4" id="recipesNum" v-model="state.recipesNum">
-          <option v-for="num in [5, 10, 15]" :key="num" :value="num">{{ num }}</option>
+          <option v-for="num in [1, 5, 10, 15]" :key="num" :value="num">{{ num }}</option>
         </select>
       </div>
 
@@ -122,6 +122,8 @@ const state = reactive({
           if(recipes.length === 0) {
             window.toast("Search Results", "No recipes found matching your criteria", "info");
           }
+          window.store.searchRecipes = [...state.recipes];
+          sessionStorage.setItem('searchRecipes', JSON.stringify(state.recipes));
         } catch (err) {
           window.toast("Search Error", "Failed to fetch recipes. Please try again.", "danger");
           console.log("Error searching recipes:", err);

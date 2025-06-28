@@ -206,8 +206,6 @@ export default {
 
         });
         window.toast('Registration successful', 'You can now login', 'success');
-        //window.router.push('/Login');
-        //window.location.href = 'http://localhost:8080/Login';//צריך לבדוק האם זה קפיצה טובה בין עמודים
         router.push('/Login');
       } catch (err) {
         if(err.response?.status === 409) {
@@ -218,7 +216,6 @@ export default {
         } else {
           window.toast('Registration failed', 'Unexpected error.', 'danger');
         }
-        //state.submitError = err.response?.data?.message || 'Unexpected error.';
       }
     };
 

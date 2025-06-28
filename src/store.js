@@ -6,6 +6,7 @@ const store = reactive({
   randomRecipes : {},
   lastViewedRecipes : {},
   favoriteRecipes: {},
+  searchRecipes: {},
   login(username,user_id) {
     // localStorage.setItem('username', username);
     console.log('login details: ', username, user_id);
