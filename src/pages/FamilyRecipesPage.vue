@@ -7,13 +7,16 @@
           :recipes="familyRecipes"
           sourceType="family"
           :showCount="true"
+          title="Family Recipes"
           noResultsMessage="You haven't added any family recipes yet."
         >
           <template #empty>
-            <div class="text-center">
-              <p>You haven't added any family recipes yet.</p>
-              <router-link to="/create-recipe" class="btn btn-primary">Add a Family Recipe</router-link>
-            </div>
+            <i class="bi bi-book fs-1 text-muted"></i>
+            <h3 class="mt-3">No family recipes yet</h3>
+            <p class="text-muted">Share your family's culinary traditions</p>
+            <router-link to="/create-recipe" class="btn btn-primary mt-2">
+              Add a Family Recipe
+            </router-link>
           </template>
         </RecipesList>
       </div>
