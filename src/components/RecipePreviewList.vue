@@ -1,17 +1,37 @@
 <template>
-  <div class="container">
-    <h3>{{ title }}</h3>
+  <div class="recipe-preview-list">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="mb-0">{{ title }} <span v-if="showCount" class="badge bg-primary ms-2">{{ recipes.length }}</span></h3>
+    </div>
+
     <div v-if="type === 'lastViewed' && !isLoggedIn">
       <LoginPage />
     </div>
     <div v-else>
-      <div v-if="recipes.length === 0" class="text-center text-muted">
-        No recipes to show.
+      <!-- Loading state -->
+      <div v-if="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading recipes...</p>
+      </div>
+      
+      <!-- Empty state -->
+      <div v-else-if="recipes.length === 0" class="text-center text-muted p-5 bg-light rounded">
+        <i class="bi bi-clipboard-x fs-1 text-muted"></i>
+        <h4 class="mt-3">No recipes to show</h4>
+        <p>{{ noResultsMessage }}</p>
       </div>
 
-      <div class="row">
-        <div class="col" v-for="r in recipes" :key="r.recipe_id">
-          <RecipePreview class="recipePreview" :sourceType="type" :recipe="r"   @toggle-favorite="handleToggleFavorite" />
+      <!-- Grid of Recipes -->
+      <div v-else :class="gridClasses">
+        <div v-for="recipe in recipes" :key="recipe.recipe_id" class="col mb-4">
+          <RecipePreview 
+            class="recipePreview h-100" 
+            :sourceType="type" 
+            :recipe="recipe" 
+            @toggle-favorite="handleToggleFavorite" 
+          />
         </div>
       </div>
     </div>
@@ -37,6 +57,26 @@ export default {
       type: String,
       default: "random",
     },
+    // Whether this is displayed on the main page
+    isMainPage: {
+      type: Boolean,
+      default: false
+    },
+    // Whether to show the count badge
+    showCount: {
+      type: Boolean,
+      default: false
+    },
+    // Custom message for empty state
+    noResultsMessage: {
+      type: String,
+      default: "No recipes are available."
+    },
+    // Loading state
+    loading: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -49,6 +89,17 @@ export default {
       // Adjust according to your store logic
       return this.$root.store.username;
     },
+    // Determine grid classes based on isMainPage prop
+    gridClasses() {
+      return {
+        'row': true,
+        'g-4': true,
+        'row-cols-1': true,
+        'row-cols-md-3': this.isMainPage, // 3 per row for main page
+        'row-cols-md-2': !this.isMainPage, // 2 per row for medium screens
+        'row-cols-lg-4': !this.isMainPage  // 4 per row for large screens if not main page
+      };
+    }
   },
   mounted() {
     this.updateRecipes();
@@ -660,11 +711,53 @@ export default {
       const recipe = this.recipes.find(r => r.recipe_id === recipeId);
       if (recipe) {
         recipe.isFavorite = !recipe.isFavorite;
+        
+        // Adjust popularity count for better visual feedback
+        if (recipe.isFavorite) {
+          recipe.popularity = (recipe.popularity || 0) + 1;
+        } else if (recipe.popularity > 0) {
+          recipe.popularity -= 1;
+        }
+        
+        // Update session storage based on recipe type
         if (this.type === "lastViewed") {
           sessionStorage.setItem('lastViewedRecipes', JSON.stringify(this.recipes));
+          
+          // Update window.store if it exists
+          if (window.store && window.store.lastViewedRecipes) {
+            const index = window.store.lastViewedRecipes.findIndex(r => r.recipe_id === recipeId);
+            if (index !== -1) {
+              window.store.lastViewedRecipes[index] = {...recipe};
+            }
+          }
         } else if (this.type === "random") {
           sessionStorage.setItem('randomRecipes', JSON.stringify(this.recipes));
+          
+          // Update window.store if it exists
+          if (window.store && window.store.randomRecipes) {
+            const index = window.store.randomRecipes.findIndex(r => r.recipe_id === recipeId);
+            if (index !== -1) {
+              window.store.randomRecipes[index] = {...recipe};
+            }
+          }
+        } else if (this.type === "search") {
+          sessionStorage.setItem('searchRecipes', JSON.stringify(this.recipes));
+          
+          // Update window.store if it exists
+          if (window.store && window.store.searchRecipes) {
+            const index = window.store.searchRecipes.findIndex(r => r.recipe_id === recipeId);
+            if (index !== -1) {
+              window.store.searchRecipes[index] = {...recipe};
+            }
+          }
         }
+        
+        // Emit event for parent components that might be listening
+        this.$emit('favorite-updated', {
+          recipeId, 
+          isFavorite: recipe.isFavorite,
+          sourceType: this.type
+        });
       }
     }
   },
@@ -672,7 +765,38 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  min-height: 400px;
+.recipe-preview-list {
+  margin-bottom: 2rem;
+}
+
+h3 {
+  font-weight: 600;
+  color: #333;
+}
+
+.badge {
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.4em 0.8em;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+  border-radius: 1rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.recipePreview {
+  transition: transform 0.2s;
+}
+
+.recipePreview:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -2,7 +2,13 @@
   <div class="container">
     <h1 class="title">Main Page</h1>
 
-    <RecipePreviewList title="Random Recipes" type="random" class="RandomRecipes center" />
+    <RecipePreviewList 
+      title="Random Recipes" 
+      type="random" 
+      class="RandomRecipes center"
+      :isMainPage="true"
+      :showCount="false" 
+    />
 
     <div v-if="!store.username" class="mt-4">
       <LoginPage />
@@ -12,11 +18,12 @@
       v-if="store.username"
       title="Last Viewed Recipes"
       type="lastViewed"
+      :isMainPage="true"
+      :showCount="false"
       :class="{
         RandomRecipes: true,
         center: true
       }"
-      disabled
     />
   </div>
 </template>

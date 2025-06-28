@@ -3,7 +3,14 @@
     <h1 class="text-center mb-4">My Favorite Recipes</h1>
     <div class="row">
       <div class="col-12">
-        <RecipePreviewList title="Favorites Recipes" type="favorite" :recipes="favorites" class="favorite center" />
+        <RecipePreviewList 
+          title="Favorites Recipes" 
+          type="favorite" 
+          :showCount="true"
+          :recipes="favorites" 
+          class="favorite center"
+          noResultsMessage="You haven't added any recipes to favorites yet." 
+        />
       </div>
     </div>
   </div>
