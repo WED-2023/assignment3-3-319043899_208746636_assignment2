@@ -2,7 +2,10 @@
   <div id="app">
     <NavBar @open-create-recipe="openCreateModal" />
     <CreateRecipePage ref="CreateRecipePage" />
-    <router-view />
+    <div class="main-content">
+      <router-view />
+      <div class="bottom-spacer"></div>
+    </div>
   </div>
 </template>
 
@@ -45,5 +48,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   min-height: 100vh;
+}
+
+.main-content {
+  padding-bottom: 20px;
+}
+
+.bottom-spacer {
+  height: 60px; /* Adjust this value to control the size of the gap */
 }
 </style>
