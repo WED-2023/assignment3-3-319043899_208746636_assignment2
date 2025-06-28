@@ -72,30 +72,22 @@
               this.loadRecipesFromSession('randomRecipes');
               const randomArr = Array.isArray(this.$root.store.randomRecipes) ? this.$root.store.randomRecipes : [];
               _recipe = randomArr.find(r => r.recipe_id === recipeId);
-              console.log("Random recipe:", _recipe);
               break;
             }
             case "lastViewed": {
               this.loadRecipesFromSession('lastViewedRecipes');
               const lastViewedArr = Array.isArray(this.$root.store.lastViewedRecipes) ? this.$root.store.lastViewedRecipes : [];
               _recipe = lastViewedArr.find(r => r.recipe_id === recipeId);
-              console.log("Last viewed recipe:", _recipe);
               break;
             }
             case "favorite": {
-
-
-                const recipeFromSession = sessionStorage.getItem('currentRecipe');
-                if (recipeFromSession) {
-                  _recipe = JSON.parse(recipeFromSession);
-                  console.log("Favorite recipe loaded from sessionStorage:", _recipe);
-                } else {
-                  _recipe = null;
-                  console.warn("No favorite recipe found in sessionStorage");
-                }
-
-
-              console.log("Favorite recipe:", _recipe);
+              const recipeFromSession = sessionStorage.getItem('currentRecipe');
+              if (recipeFromSession) {
+                _recipe = JSON.parse(recipeFromSession);
+              } else {
+                _recipe = null;
+                console.warn("No favorite recipe found in sessionStorage");
+              }
               break;
             }
 
@@ -125,7 +117,6 @@
                 const recipeFromSession = sessionStorage.getItem('currentRecipe');
                 if (recipeFromSession) {
                   _recipe = JSON.parse(recipeFromSession);
-                  console.log("Favorite recipe loaded from sessionStorage:", _recipe);
                 } else {
                   _recipe = null;
                   console.warn("No favorite recipe found in sessionStorage");
@@ -151,8 +142,6 @@
               instructions
             };
           }
-          console.log("Recipe found in store:", this.recipe);
-
 
         }catch (error) {
           console.error("Error fetching recipe:", error);
