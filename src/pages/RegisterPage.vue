@@ -30,7 +30,8 @@
           :state="v$.firstName.$dirty ? !v$.firstName.$error : null"
         />
         <b-form-invalid-feedback v-if="v$.firstName.$dirty && v$.firstName.$error">
-          First name is required.
+          <div v-if="v$.firstName.required.$invalid">First name is required.</div>
+          <div v-else-if="v$.firstName.alpha.$invalid">First name must contain only english letters.</div>
         </b-form-invalid-feedback>
       </b-form-group>
 
@@ -42,8 +43,9 @@
           @blur="v$.lastName.$touch()"
           :state="v$.lastName.$dirty ? !v$.lastName.$error : null"
         />
-        <b-form-invalid-feedback v-if="v$.lastName.$error">
-          Last name is required.
+        <b-form-invalid-feedback v-if="v$.lastName.$dirty && v$.lastName.$error">
+          <div v-if="v$.lastName.required.$invalid">Last name is required.</div>
+          <div v-else-if="v$.lastName.alpha.$invalid">Last name must contain only english letters.</div>
         </b-form-invalid-feedback>
       </b-form-group>
 
@@ -66,10 +68,11 @@
         <b-form-select
           id="country"
           v-model="state.country"
-          :options="countries"
+          :options="countryOptions"
           @change="v$.country.$touch()"
+          :state="v$.country.$dirty ? !v$.country.$error : null"
         />
-        <b-form-invalid-feedback v-if="v$.country.$error">
+        <b-form-invalid-feedback v-if="v$.country.$dirty && v$.country.$error">
           Country is required.
         </b-form-invalid-feedback>
       </b-form-group>
@@ -85,9 +88,10 @@
         />
         <b-form-invalid-feedback v-if="v$.password?.$dirty && v$.password?.$error">
           <div v-if="v$.password.required.$invalid">Password is required.</div>
-          <div v-else-if="v$.password.minLength.$invalid || !v$.password.maxLength.$invalid">
-            Password must be 5–10 characters.
-          </div>
+          <div v-else-if="v$.password.minLength.$invalid">Password must be at least 5 characters.</div>
+          <div v-else-if="v$.password.maxLength.$invalid">Password must be at most 10 characters.</div>
+          <div v-else-if="v$.password.hasDigit.$invalid">Password must contain at least one digit.</div>
+          <div v-else-if="v$.password.hasSpecial.$invalid">Password must contain at least one special character.</div>
         </b-form-invalid-feedback>
       </b-form-group>
 
@@ -129,10 +133,10 @@
 </template>
 
 <script>
-import { computed,reactive } from 'vue';
+import { computed, reactive, ref, onMounted } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required, minLength, maxLength, alpha, sameAs, email as emailValidator} from '@vuelidate/validators';
-import rawCountries from '../assets/countries.json';
+import { required, minLength, maxLength, alpha, sameAs, email as emailValidator, helpers } from '@vuelidate/validators';
+// import rawCountries from '../assets/countries.json';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -148,11 +152,19 @@ export default {
       country: '',
       password: '',
       confirmedPassword: '',
-      
-
       submitError: null,
     });
     const passwordRef = computed(() => state.password);
+
+    // Custom validators for password
+    const hasDigit = helpers.withMessage(
+      'Password must contain at least one digit.',
+      value => /\d/.test(value || '')
+    );
+    const hasSpecial = helpers.withMessage(
+      'Password must contain at least one special character.',
+      value => /[!@#$%^&*(),.?":{}|<>\]/;'`~_+=-]/.test(value || '')
+    );
 
     const rules = {
       username: {
@@ -161,8 +173,8 @@ export default {
         maxLength: maxLength(8),
         alpha,
       },
-      firstName: { required },
-      lastName: { required },
+      firstName: { required, alpha },
+      lastName: { required, alpha },
       country: { required },
       email: {
         required,
@@ -172,6 +184,8 @@ export default {
         required,
         minLength: minLength(5),
         maxLength: maxLength(10),
+        hasDigit,
+        hasSpecial,
       },
       confirmedPassword: {
         required,
@@ -180,6 +194,24 @@ export default {
     };
 
     const v$ = useVuelidate(rules, state);
+
+    // --- Country list from API ---
+    const countries = ref([]);
+    const countryOptions = computed(() => [
+      { value: '', text: 'Select a country' },
+      ...countries.value.map(c => ({ value: c.name.common, text: c.name.common }))
+    ]);
+    onMounted(async () => {
+      try {
+        const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca3');
+        const data = await response.json();
+        countries.value = data.sort((a, b) =>
+          a.name.common.localeCompare(b.name.common)
+        );
+      } catch (error) {
+        console.error('Failed to load countries:', error);
+      }
+    });
 
     const register = async () => {
       console.log("Registering with state:", state);
@@ -221,7 +253,8 @@ export default {
 
     return {
       state,
-      countries: ['Select a country', ...rawCountries],
+      countries,
+      countryOptions,
       register,
       v$,
     };
