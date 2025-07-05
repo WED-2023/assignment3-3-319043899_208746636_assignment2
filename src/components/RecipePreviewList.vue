@@ -172,7 +172,29 @@ export default {
     // ];
 
       } else if (this.type === "favorite") {
-        // Handle favorites
+        // Fetch favorite recipes from API
+        try {
+          const response = await this.axios.get("http://localhost:3000/users/favorites", { withCredentials: true });
+          this.recipes = Array.isArray(response.data) ? response.data : (response.data.recipes || []);
+        } catch (error) {
+          console.log(error);
+          this.recipes = [];
+        }
+
+      } else if (this.type === "MyRecipes") {
+        // Fetch user recipes from API
+        try {
+          const response = await this.axios.get("http://localhost:3000/users/myrecipes", { withCredentials: true });
+          console.log("User recipes response:", response.data);
+          this.recipes = Array.isArray(response.data) ? response.data : (response.data.recipes || []);
+        } catch (error) {
+          console.log(error);
+          this.recipes = [];
+        }
+      }
+      else {
+        console.warn("Unknown type:", this.type);
+        this.recipes = [];
       }
     },
     
