@@ -1,26 +1,33 @@
 <template>
   <div class="recipe-preview-list">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="mb-0">{{ title }} <span v-if="showCount" class="badge bg-primary ms-2">{{ recipes.length }}</span></h3>
+    <div class="d-flex justify-content-between align-items-center">
+      <h3>{{ title }} <span v-if="showCount" class="badge ms-2">{{ recipes.length }}</span></h3>
     </div>
 
     <div v-if="type === 'lastViewed' && !isLoggedIn">
-      <LoginPage />
+      <div class="login-required-container p-4 bg-light rounded">
+        <div class="text-center">
+          <i class="bi bi-lock-fill fs-1 text-warning mb-3"></i>
+          <h4 class="mb-3">Login Required</h4>
+          <p class="mb-4">Please login to view your recently viewed recipes.</p>
+        </div>
+        <LoginPage :embedded="true" />
+      </div>
     </div>
     <div v-else>
       <!-- Loading state -->
-      <div v-if="loading || isLoading" class="text-center my-5">
-        <div class="spinner-border text-primary" role="status">
+      <div v-if="loading || isLoading" class="text-center my-5 p-5">
+        <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-2">Loading recipes...</p>
+        <p class="mt-3">Loading your delicious recipes...</p>
       </div>
       
       <!-- Empty state -->
-      <div v-else-if="recipes.length === 0" class="text-center text-muted p-5 bg-light rounded">
-        <i class="bi bi-clipboard-x fs-1 text-muted"></i>
-        <h4 class="mt-3">No recipes to show</h4>
-        <p>{{ noResultsMessage }}</p>
+      <div v-else-if="recipes.length === 0" class="text-center p-5 bg-light rounded">
+        <i class="bi bi-clipboard-x fs-1 mb-3"></i>
+        <h4 class="mb-3">No recipes to show</h4>
+        <p class="mb-0">{{ noResultsMessage }}</p>
       </div>
 
       <!-- Grid of Recipes -->
@@ -127,49 +134,49 @@ export default {
 
       } else if (this.type === "random") {
 
-        try {
-        const response = await this.axios.get(
-            this.$root.store.server_domain + "/recipes/random"
-        );
-        console.log("API response:", response.data);
-        const recipes = response.data;
-        this.recipes = [];
-        this.recipes.push(...recipes);
-        } catch (error) {
-        console.log(error);
-        }
+        // try {
+        // const response = await this.axios.get(
+        //     this.$root.store.server_domain + "/recipes/random"
+        // );
+        // console.log("API response:", response.data);
+        // const recipes = response.data;
+        // this.recipes = [];
+        // this.recipes.push(...recipes);
+        // } catch (error) {
+        // console.log(error);
+        // }
 
 
     //when there are no points in spoonacular, we use the following code://
-    // this.recipes = [
-    //   {
-    //     "recipe_id": 657968,
-    //     "name": "Raw Carrot Cake",
-    //     "picture": "https://img.spoonacular.com/recipes/657968-556x370.jpg",
-    //     "timeToMake": "45 minutes",
-    //     "popularity": 10,
-    //     "dietCategory": "vegan",
-    //     "isGlutenFree": true
-    //   },
-    //   {
-    //     "recipe_id": 658509,
-    //     "name": "Roasted Broccoli with Lemon and Garlic",
-    //     "picture": "https://img.spoonacular.com/recipes/658509-556x370.jpg",
-    //     "timeToMake": "25 minutes",
-    //     "popularity": 18,
-    //     "dietCategory": "vegetarian",
-    //     "isGlutenFree": true
-    //   },
-    //   {
-    //     "recipe_id": 661925,
-    //     "name": "Strawberry and Nutella Cobbler",
-    //     "picture": "https://img.spoonacular.com/recipes/661925-556x370.jpg",
-    //     "timeToMake": "55 minutes",
-    //     "popularity": 25,
-    //     "dietCategory": "",
-    //     "isGlutenFree": false
-    //   }
-    // ];
+    this.recipes = [
+      {
+        "recipe_id": 657968,
+        "name": "Raw Carrot Cake",
+        "picture": "https://img.spoonacular.com/recipes/657968-556x370.jpg",
+        "timeToMake": "45 minutes",
+        "popularity": 10,
+        "dietCategory": "vegan",
+        "isGlutenFree": true
+      },
+      {
+        "recipe_id": 658509,
+        "name": "Roasted Broccoli with Lemon and Garlic",
+        "picture": "https://img.spoonacular.com/recipes/658509-556x370.jpg",
+        "timeToMake": "25 minutes",
+        "popularity": 18,
+        "dietCategory": "vegetarian",
+        "isGlutenFree": true
+      },
+      {
+        "recipe_id": 661925,
+        "name": "Strawberry and Nutella Cobbler",
+        "picture": "https://img.spoonacular.com/recipes/661925-556x370.jpg",
+        "timeToMake": "55 minutes",
+        "popularity": 25,
+        "dietCategory": "",
+        "isGlutenFree": false
+      }
+    ];
 
       } else if (this.type === "favorite") {
         // Fetch favorite recipes from API
@@ -272,7 +279,10 @@ export default {
         if (this.type === "lastViewed") {
           sessionStorage.setItem('lastViewedRecipes', JSON.stringify(this.recipes));
           
-          // Update window.store if it exists
+          // Update root store
+          this.$root.store.lastViewedRecipes = [...this.recipes];
+          
+          // Update window.store if it exists (for compatibility)
           if (window.store && window.store.lastViewedRecipes) {
             const index = window.store.lastViewedRecipes.findIndex(r => r.recipe_id === recipeId);
             if (index !== -1) {
@@ -281,6 +291,9 @@ export default {
           }
         } else if (this.type === "random") {
           sessionStorage.setItem('randomRecipes', JSON.stringify(this.recipes));
+          
+          // Update root store
+          this.$root.store.randomRecipes = [...this.recipes];
           
           // Update window.store if it exists
           if (window.store && window.store.randomRecipes) {
@@ -292,6 +305,9 @@ export default {
         } else if (this.type === "search") {
           sessionStorage.setItem('searchRecipes', JSON.stringify(this.recipes));
           
+          // Update root store
+          this.$root.store.searchRecipes = [...this.recipes];
+          
           // Update window.store if it exists
           if (window.store && window.store.searchRecipes) {
             const index = window.store.searchRecipes.findIndex(r => r.recipe_id === recipeId);
@@ -299,6 +315,16 @@ export default {
               window.store.searchRecipes[index] = {...recipe};
             }
           }
+        } else if (this.type === "favorite") {
+          sessionStorage.setItem('favoriteRecipes', JSON.stringify(this.recipes));
+          
+          // Update root store
+          this.$root.store.favoriteRecipes = [...this.recipes];
+        } else if (this.type === "MyRecipes") {
+          sessionStorage.setItem('userRecipes', JSON.stringify(this.recipes));
+          
+          // Update root store
+          this.$root.store.userRecipes = [...this.recipes];
         }
         
         // Emit event for parent components that might be listening
@@ -318,34 +344,102 @@ export default {
   margin-bottom: 2rem;
 }
 
+/* Title styling to match navbar theme */
 h3 {
   font-weight: 600;
-  color: #333;
+  color: #444444; /* Match navbar text color */
+  position: relative;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Underline accent similar to active nav links */
+h3:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 60px;
+  background-color: #d1925e; /* Warm orange-brown from navbar */
 }
 
 .badge {
   font-size: 0.9rem;
   font-weight: 500;
   padding: 0.4em 0.8em;
+  background-color: #d1925e !important; /* Match navbar accent color */
+  color: white;
 }
 
 .bg-light {
-  background-color: #f8f9fa !important;
+  background-color: #f9f5f0 !important; /* Light beige from navbar */
   border-radius: 1rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.075);
+  border: 1px solid #e6e0d6;
 }
 
 .spinner-border {
   width: 3rem;
   height: 3rem;
+  color: #d1925e !important; /* Match navbar accent color */
 }
 
+/* Recipe card styling */
 .recipePreview {
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
+  border: 1px solid #e6e0d6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: #f9f5f0; /* Light beige from navbar */
 }
 
 .recipePreview:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(209, 146, 94, 0.15); /* Colored shadow matching navbar accent */
+  border-color: #d1925e; /* Border highlight on hover */
+}
+
+/* Add more styling for empty state */
+.text-muted {
+  color: #6c757d !important;
+}
+
+.bi-clipboard-x {
+  color: #d1925e; /* Match navbar accent color */
+}
+
+/* Login form within RecipePreviewList */
+.login-required-container {
+  background-color: #f9f5f0;
+  border: 1px solid #e6e0d6;
+}
+
+.login-required-container :deep(.embedded-login-form) {
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.login-required-container h4 {
+  color: #444444;
+  font-weight: 600;
+}
+
+.login-required-container .text-warning {
+  color: #d1925e !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 767.98px) {
+  h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  h3:after {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+  }
 }
 </style>

@@ -40,7 +40,7 @@
               <i class="bi bi-person-circle login-icon"></i>
               <h3>Welcome Back!</h3>
             </div>
-            <LoginPage class="custom-login" />
+            <LoginPage class="custom-login" :embedded="true" />
             <div class="signup-section text-center mt-3 pt-3 border-top">
               <p class="mb-2">New here? Join our community today!</p>
               <router-link to="/register" class="signup-btn">
@@ -188,54 +188,55 @@ export default {
   font-size: 0.95rem;
 }
 
-.custom-login :deep(.login-page h1) {
-  display: none; /* Hide the default "Login" header since we have our own */
+.custom-login {
+  width: 100%;
 }
 
 .custom-login :deep(.form-group) {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .custom-login :deep(label) {
   font-weight: 500;
-  color: #444444; /* Match NavBar text color */
-  margin-bottom: 0.5rem;
-  display: block;
-  letter-spacing: 0.5px; /* Match NavBar text style */
+  color: #444444;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
 }
 
 .custom-login :deep(.form-control) {
   border-radius: 0.5rem;
-  padding: 0.6rem 1rem;
-  border: 1px solid #e6e0d6; /* Match NavBar border color */
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e6e0d6;
   background-color: white;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .custom-login :deep(.form-control:focus) {
-  border-color: #d1925e; /* Match NavBar accent color */
-  box-shadow: 0 0 0 0.25rem rgba(209, 146, 94, 0.25); /* Match NavBar accent color */
+  border-color: #d1925e;
+  box-shadow: 0 0 0 0.25rem rgba(209, 146, 94, 0.25);
 }
 
-.custom-login :deep(.btn-primary) {
+.custom-login :deep(.custom-btn) {
   border-radius: 0.5rem;
-  padding: 0.6rem 0;
+  padding: 0.5rem 0;
   font-weight: 500;
   transition: all 0.2s ease;
   width: 100%;
-  margin-top: 1rem;
-  background-color: #d1925e; /* Match NavBar accent color */
-  border-color: #d1925e; /* Match NavBar accent color */
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
+  margin-top: 0.5rem;
+  background-color: #d1925e;
+  border-color: #d1925e;
+  font-size: 0.95rem;
 }
 
-.custom-login :deep(.btn-primary:hover) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(209, 146, 94, 0.25); /* Match NavBar accent color */
-  background-color: #c48350; /* Slightly darker shade of NavBar accent color */
+.custom-login :deep(.custom-btn:hover) {
+  background-color: #c48350;
   border-color: #c48350;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(209, 146, 94, 0.25);
+}
+
+.custom-login :deep(.form-error) {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
 }
 
 /* Sign-up button styling */
