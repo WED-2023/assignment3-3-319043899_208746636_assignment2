@@ -1,6 +1,6 @@
 <template>
 
-  <div class="card h-100 text-decoration-none position-relative">
+  <div class="card h-100 text-decoration-none position-relative recipe-card">
     <img
       v-if="recipe.picture"
       :src="recipe.picture"
@@ -11,43 +11,49 @@
     <div v-if="recipe.isWatched" class="watched-ribbon">
       <span class="watched-ribbon-text">Watched</span>
     </div>
-    <div class="card-body text-center">
-      <h5 class="card-title">{{ recipe.name }}</h5>
-      <div class="d-flex justify-content-around align-items-center mb-2 info-icons-row">
-        <span class="info-icon" title="Time to Make">
-          <i class="bi bi-clock"></i>
-          <span class="icon-label">{{ recipe.timeToMake }} min</span>
-        </span>
-        <span class="info-icon" title="Popularity">
-          <i class="bi bi-heart-fill"></i>
-          <span class="icon-label">{{ recipe.popularity }}</span>
-        </span>
-        <span class="info-icon" title="Diet Category">
-          <template v-if="recipe.dietCategory">
+    <div class="card-body d-flex flex-column text-center">
+      <!-- Content Area (flexbox will push this up if needed) -->
+      <div class="content-area">
+        <h5 class="card-title">{{ recipe.name }}</h5>
+        <div class="d-flex justify-content-around align-items-center mb-2 info-icons-row">
+          <span class="info-icon" title="Time to Make">
+            <i class="bi bi-clock"></i>
+            <span class="icon-label">{{ recipe.timeToMake }} min</span>
+          </span>
+          <span class="info-icon" title="Popularity">
+            <i class="bi bi-heart-fill"></i>
+            <span class="icon-label">{{ recipe.popularity }}</span>
+          </span>
+          <!-- Gluten Free icon - always display this right after Popularity -->
+          <span class="info-icon" title="Gluten Free">
+            <i v-if="recipe.isGlutenFree" class="bi bi-patch-check-fill gluten-yes"></i>
+            <i v-else class="bi bi-x-circle gluten-no"></i>
+            <span class="icon-label">{{ recipe.isGlutenFree ? 'GF' : 'NGF' }}</span>
+          </span>
+          <!-- Only display Diet Category if it exists and is vegan/vegetarian -->
+          <span v-if="recipe.dietCategory && (recipe.dietCategory.toLowerCase().includes('vegan') || recipe.dietCategory.toLowerCase().includes('vegetarian'))" class="info-icon" title="Diet Category">
             <i v-if="recipe.dietCategory.toLowerCase().includes('vegan')" class="bi bi-leaf vegan-leaf"></i>
             <i v-else-if="recipe.dietCategory.toLowerCase().includes('vegetarian')" class="bi bi-egg-fried"></i>
-            <!-- If none or not vegan/vegetarian, display nothing -->
-          </template>
-          <span v-if="recipe.dietCategory && (recipe.dietCategory.toLowerCase().includes('vegan') || recipe.dietCategory.toLowerCase().includes('vegetarian'))" class="icon-label">{{ recipe.dietCategory }}</span>
-        </span>
-        <span class="info-icon" title="Gluten Free">
-          <i v-if="recipe.isGlutenFree" class="bi bi-patch-check-fill gluten-yes"></i>
-          <i v-else class="bi bi-x-circle gluten-no"></i>
-          <span class="icon-label">{{ recipe.isGlutenFree ? 'GF' : 'NGF' }}</span>
-        </span>
-      </div>
-      <p class="card-text mb-1 d-flex justify-content-center align-items-center favorite-row">
-        <button
-          class="btn btn-link p-0 m-0 align-baseline favorite-btn"
-          @click.stop="toggleFavorite"
-          :aria-label="recipe.isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-        >
-          <span :class="recipe.isFavorite ? 'favorite' : 'not-favorite'">
-            <i v-if="recipe.isFavorite" class="bi bi-star-fill favorite-star"></i>
-            <i v-else class="bi bi-star not-favorite-star"></i>
+            <span class="icon-label">{{ recipe.dietCategory }}</span>
           </span>
-        </button>
-      </p>
+        </div>
+      </div>
+      
+      <!-- Favorite Button Area (always at the bottom) -->
+      <div class="favorite-button-container mt-auto">
+        <div class="d-flex justify-content-center align-items-center favorite-row">
+          <button
+            class="btn btn-link p-0 m-0 align-baseline favorite-btn"
+            @click.stop="toggleFavorite"
+            :aria-label="recipe.isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+          >
+            <span :class="recipe.isFavorite ? 'favorite' : 'not-favorite'">
+              <i v-if="recipe.isFavorite" class="bi bi-star-fill favorite-star"></i>
+              <i v-else class="bi bi-star not-favorite-star"></i>
+            </span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -227,5 +233,29 @@ export default {
 .vegan-leaf {
   color: #43a047 !important;
   font-size: 1.5rem;
+}
+
+/* Card layout styles for fixed favorite button at bottom */
+.recipe-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-area {
+  flex-grow: 1;
+}
+
+.favorite-button-container {
+  padding-top: 10px;
+}
+
+.favorite-row {
+  margin-bottom: 0 !important;
 }
 </style>
