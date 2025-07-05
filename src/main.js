@@ -9,6 +9,7 @@ import store from './store.js';
 // Bootstrap CSS + JS
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.bundle.js';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // BootstrapVue 3
 import BootstrapVue3 from 'bootstrap-vue-3';
