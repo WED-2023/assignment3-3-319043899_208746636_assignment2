@@ -13,10 +13,29 @@
     </div>
     <div class="card-body text-center">
       <h5 class="card-title">{{ recipe.name }}</h5>
-      <p class="card-text mb-1"><strong>Time:</strong> {{ recipe.timeToMake }}</p>
-      <p class="card-text mb-1"><strong>Likes:</strong> {{ recipe.popularity }}</p>
-      <p class="card-text mb-1"><strong>Diet:</strong> {{ recipe.dietCategory }}</p>
-      <p class="card-text mb-1"><strong>Gluten Free:</strong> {{ recipe.isGlutenFree ? 'Yes' : 'No' }}</p>
+      <div class="d-flex justify-content-around align-items-center mb-2 info-icons-row">
+        <span class="info-icon" title="Time to Make">
+          <i class="bi bi-clock"></i>
+          <span class="icon-label">{{ recipe.timeToMake }} min</span>
+        </span>
+        <span class="info-icon" title="Popularity">
+          <i class="bi bi-heart-fill"></i>
+          <span class="icon-label">{{ recipe.popularity }}</span>
+        </span>
+        <span class="info-icon" title="Diet Category">
+          <template v-if="recipe.dietCategory">
+            <i v-if="recipe.dietCategory.toLowerCase().includes('vegan')" class="bi bi-leaf vegan-leaf"></i>
+            <i v-else-if="recipe.dietCategory.toLowerCase().includes('vegetarian')" class="bi bi-egg-fried"></i>
+            <!-- If none or not vegan/vegetarian, display nothing -->
+          </template>
+          <span v-if="recipe.dietCategory && (recipe.dietCategory.toLowerCase().includes('vegan') || recipe.dietCategory.toLowerCase().includes('vegetarian'))" class="icon-label">{{ recipe.dietCategory }}</span>
+        </span>
+        <span class="info-icon" title="Gluten Free">
+          <i v-if="recipe.isGlutenFree" class="bi bi-patch-check-fill gluten-yes"></i>
+          <i v-else class="bi bi-x-circle gluten-no"></i>
+          <span class="icon-label">{{ recipe.isGlutenFree ? 'GF' : 'NGF' }}</span>
+        </span>
+      </div>
       <p class="card-text mb-1 d-flex justify-content-center align-items-center favorite-row">
         <button
           class="btn btn-link p-0 m-0 align-baseline favorite-btn"
@@ -179,5 +198,34 @@ export default {
   transform: rotate(-30deg);
   box-sizing: border-box;
   text-shadow: 0 1px 2px #fff8, 0 0.5px 0 #adb5bd88;
+}
+.info-icons-row {
+  margin-bottom: 0.5rem;
+}
+.info-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  min-width: 48px;
+}
+.info-icon i {
+  font-size: 1.5rem;
+  margin-bottom: 2px;
+}
+.icon-label {
+  font-size: 0.85rem;
+  color: #444;
+  font-weight: 500;
+}
+.gluten-yes {
+  color: #198754;
+}
+.gluten-no {
+  color: #dc3545;
+}
+.vegan-leaf {
+  color: #43a047 !important;
+  font-size: 1.5rem;
 }
 </style>
