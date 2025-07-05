@@ -41,6 +41,12 @@
               <h3>Welcome Back!</h3>
             </div>
             <LoginPage class="custom-login" />
+            <div class="signup-section text-center mt-3 pt-3 border-top">
+              <p class="mb-2">New here? Join our community today!</p>
+              <router-link to="/register" class="signup-btn">
+                <i class="bi bi-person-plus"></i> Create an Account
+              </router-link>
+            </div>
           </div>
         </div>
 
@@ -230,6 +236,41 @@ export default {
   box-shadow: 0 4px 8px rgba(209, 146, 94, 0.25); /* Match NavBar accent color */
   background-color: #c48350; /* Slightly darker shade of NavBar accent color */
   border-color: #c48350;
+}
+
+/* Sign-up button styling */
+.signup-section {
+  border-top-color: #e6e0d6;
+}
+
+.signup-section p {
+  color: #444444;
+  font-size: 0.9rem;
+}
+
+.signup-btn {
+  display: inline-block;
+  background-color: transparent;
+  color: #d1925e;
+  border: 1px solid #d1925e;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.signup-btn:hover {
+  background-color: #f5ede2;
+  color: #c48350;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(209, 146, 94, 0.1);
+}
+
+.signup-btn i {
+  margin-right: 0.5rem;
 }
 
 .blur {
