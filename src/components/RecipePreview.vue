@@ -1,6 +1,6 @@
 <template>
 
-  <div class="card h-100 text-decoration-none">
+  <div class="card h-100 text-decoration-none position-relative">
     <img
       v-if="recipe.picture"
       :src="recipe.picture"
@@ -8,29 +8,24 @@
       alt="Recipe image"
       @click="handleClick"
     />
+    <div v-if="recipe.isWatched" class="watched-ribbon">
+      <span class="watched-ribbon-text">Watched</span>
+    </div>
     <div class="card-body text-center">
       <h5 class="card-title">{{ recipe.name }}</h5>
       <p class="card-text mb-1"><strong>Time:</strong> {{ recipe.timeToMake }}</p>
       <p class="card-text mb-1"><strong>Likes:</strong> {{ recipe.popularity }}</p>
       <p class="card-text mb-1"><strong>Diet:</strong> {{ recipe.dietCategory }}</p>
       <p class="card-text mb-1"><strong>Gluten Free:</strong> {{ recipe.isGlutenFree ? 'Yes' : 'No' }}</p>
-      <p class="card-text mb-1">
-        <strong>Watched:</strong>
-        <span :class="['icon-indicator', recipe.isWatched ? 'watched' : 'not-watched']">
-          <span v-if="recipe.isWatched">👁️</span>
-          <span v-else>🙈</span>
-        </span>
-      </p>
-      <p class="card-text mb-1">
-        <strong>Favorite:</strong>
+      <p class="card-text mb-1 d-flex justify-content-center align-items-center favorite-row">
         <button
           class="btn btn-link p-0 m-0 align-baseline favorite-btn"
           @click.stop="toggleFavorite"
           :aria-label="recipe.isFavorite ? 'Remove from favorites' : 'Add to favorites'"
         >
           <span :class="recipe.isFavorite ? 'favorite' : 'not-favorite'">
-            <span v-if="recipe.isFavorite">❤️</span>
-            <span v-else>🤍</span>
+            <i v-if="recipe.isFavorite" class="bi bi-star-fill favorite-star"></i>
+            <i v-else class="bi bi-star not-favorite-star"></i>
           </span>
         </button>
       </p>
@@ -141,5 +136,48 @@ export default {
 }
 .not-favorite {
   color: #000000;
+}
+.favorite-star {
+  color: #ffd700 !important; /* yellow */
+  font-size: 2rem;
+  filter: drop-shadow(0 0 0.5px #111) drop-shadow(0 0 1.5px #111);
+}
+.not-favorite-star {
+  color: #fff !important;
+  font-size: 2rem;
+  filter: drop-shadow(0 0 0.5px #111) drop-shadow(0 0 1.5px #111);
+}
+.position-relative {
+  position: relative;
+}
+.watched-ribbon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+.watched-ribbon-text {
+  position: absolute;
+  left: -60px;
+  top: 28px;
+  width: 240px;
+  background: linear-gradient(90deg, #adb5bd 70%, #f8f9fa 100%);
+  color: #495057;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-align: center;
+  padding: 4px 0;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px #adb5bd22;
+  letter-spacing: 1.5px;
+  border: 1.5px solid #adb5bd;
+  opacity: 0.92;
+  transform: rotate(-30deg);
+  box-sizing: border-box;
+  text-shadow: 0 1px 2px #fff8, 0 0.5px 0 #adb5bd88;
 }
 </style>
