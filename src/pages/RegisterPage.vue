@@ -1,134 +1,194 @@
 <template>
-  <div class="container mt-4" style="max-width: 500px;">
-    <h2 class="mb-4">Register</h2>
-    <b-form @submit.prevent="register">
-
-      <!-- Username -->
-      <b-form-group label="Username" label-for="username">
-        <b-form-input
-          id="username"
-          v-model="state.username"
-          @blur="v$.username.$touch()"
-          :state="v$.username.$dirty ? !v$.username.$error : null"
-        />
-        <b-form-invalid-feedback v-if="v$.username.$dirty && v$.username.$error">
-          <div v-if="v$.username.required.$invalid">Username is required.</div>
-          <div v-else-if="v$.username.minLength.$invalid">Username must be at least 3 characters.</div>
-          <div v-else-if="v$.username.maxLength.$invalid">Username must be at most 8 characters.</div>
-          <div v-else-if="v$.username.alpha.$invalid">Username must contain only english letters.</div>
-        </b-form-invalid-feedback>
-        <!-- <pre>{{ v$.username }}</pre> Add this line here for debugging -->
-
-      </b-form-group>
-
-      <!-- First Name -->
-      <b-form-group label="First Name" label-for="firstName">
-        <b-form-input
-          id="firstName"
-          v-model="state.firstName"
-          @blur="v$.firstName.$touch()"
-          :state="v$.firstName.$dirty ? !v$.firstName.$error : null"
-        />
-        <b-form-invalid-feedback v-if="v$.firstName.$dirty && v$.firstName.$error">
-          <div v-if="v$.firstName.required.$invalid">First name is required.</div>
-          <div v-else-if="v$.firstName.alpha.$invalid">First name must contain only english letters.</div>
-        </b-form-invalid-feedback>
-      </b-form-group>
-
-      <!-- Last Name -->
-      <b-form-group label="Last Name" label-for="lastName">
-        <b-form-input
-          id="lastName"
-          v-model="state.lastName"
-          @blur="v$.lastName.$touch()"
-          :state="v$.lastName.$dirty ? !v$.lastName.$error : null"
-        />
-        <b-form-invalid-feedback v-if="v$.lastName.$dirty && v$.lastName.$error">
-          <div v-if="v$.lastName.required.$invalid">Last name is required.</div>
-          <div v-else-if="v$.lastName.alpha.$invalid">Last name must contain only english letters.</div>
-        </b-form-invalid-feedback>
-      </b-form-group>
-
-      <!-- Email -->
-      <b-form-group label="Email" label-for="email">
-        <b-form-input
-          id="email"
-          v-model="state.email"
-          type="email"
-          @blur="v$.email.$touch()"
-          :state="v$.email.$dirty ? !v$.email.$error : null"
-        />
-        <b-form-invalid-feedback v-if="v$.email.$error">
-          Valid email is required.
-        </b-form-invalid-feedback>
-      </b-form-group>
-
-      <!-- Country -->
-      <b-form-group label="Country" label-for="country">
-        <b-form-select
-          id="country"
-          v-model="state.country"
-          :options="countryOptions"
-          @change="v$.country.$touch()"
-          :state="v$.country.$dirty ? !v$.country.$error : null"
-        />
-        <b-form-invalid-feedback v-if="v$.country.$dirty && v$.country.$error">
-          Country is required.
-        </b-form-invalid-feedback>
-      </b-form-group>
-
-      <!-- Password -->
-      <b-form-group label="Password" label-for="password">
-        <b-form-input
-          id="password"
-          type="password"
-          v-model="state.password"
-          @blur="v$.password.$touch()"
-          :state="v$.password.$dirty ? !v$.password.$error : null"
-        />
-        <b-form-invalid-feedback v-if="v$.password?.$dirty && v$.password?.$error">
-          <div v-if="v$.password.required.$invalid">Password is required.</div>
-          <div v-else-if="v$.password.minLength.$invalid">Password must be at least 5 characters.</div>
-          <div v-else-if="v$.password.maxLength.$invalid">Password must be at most 10 characters.</div>
-          <div v-else-if="v$.password.hasDigit.$invalid">Password must contain at least one digit.</div>
-          <div v-else-if="v$.password.hasSpecial.$invalid">Password must contain at least one special character.</div>
-        </b-form-invalid-feedback>
-      </b-form-group>
-
-      <!-- Confirm Password -->
-      <b-form-group label="Confirm Password" label-for="confirmedPassword">
-        <b-form-input
-          id="confirmedPassword"
-          type="password"
-          v-model="state.confirmedPassword"
-          @blur="v$.confirmedPassword.$touch()"
-          :state="v$.confirmedPassword.$dirty ? !v$.confirmedPassword.$error : null"
-        />
-        <b-form-invalid-feedback v-if="v$.confirmedPassword?.$dirty && v$.confirmedPassword?.$error">
-          <div v-if="v$.confirmedPassword.required.$invalid">Confirmation is required.</div>
-          <div v-else-if="v$.confirmedPassword.sameAsPassword.$invalid">
-            Passwords do not match.
-          </div>
-        </b-form-invalid-feedback>
-      </b-form-group>
-
-      <b-button type="submit" variant="success" class="w-100">Register</b-button>
-
-      <b-alert
-        variant="danger"
-        class="mt-3"
-        dismissible
-        v-if="state.submitError"
-        show
-      >
-        Registration failed: {{ state.submitError }}
-      </b-alert>
-
-      <div class="mt-2">
-        Already have an account?
-        <router-link to="/login">Login here</router-link>
+  <div class="register-container">
+    <div class="register-card">
+      <div class="register-header">
+        <h1>Create Account</h1>
+        <div class="accent-line"></div>
       </div>
-    </b-form>
+      
+      <form @submit.prevent="register" class="register-form">
+        <!-- Username -->
+        <div class="form-group mb-3">
+          <label class="form-label">Username</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-person"></i>
+            </span>
+            <input
+              id="username"
+              v-model="state.username"
+              @blur="v$.username.$touch()"
+              :class="['form-control', {'is-invalid': v$.username.$dirty && v$.username.$error}]"
+              placeholder="Choose a username"
+            />
+          </div>
+          <div v-if="v$.username.$dirty && v$.username.$error" class="form-error">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <span v-if="v$.username.required.$invalid">Username is required.</span>
+            <span v-else-if="v$.username.minLength.$invalid">Username must be at least 3 characters.</span>
+            <span v-else-if="v$.username.maxLength.$invalid">Username must be at most 8 characters.</span>
+            <span v-else-if="v$.username.alpha.$invalid">Username must contain only English letters.</span>
+          </div>
+        </div>
+
+        <!-- First Name & Last Name (in a row) -->
+        <div class="row mb-3">
+          <div class="col-md-6 mb-3 mb-md-0">
+            <label class="form-label">First Name</label>
+            <div class="input-group">
+              <input
+                id="firstName"
+                v-model="state.firstName"
+                @blur="v$.firstName.$touch()"
+                :class="['form-control', {'is-invalid': v$.firstName.$dirty && v$.firstName.$error}]"
+                placeholder="Your first name"
+              />
+            </div>
+            <div v-if="v$.firstName.$dirty && v$.firstName.$error" class="form-error">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              <span v-if="v$.firstName.required.$invalid">First name is required.</span>
+              <span v-else-if="v$.firstName.alpha.$invalid">First name must contain only English letters.</span>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <label class="form-label">Last Name</label>
+            <div class="input-group">
+              <input
+                id="lastName"
+                v-model="state.lastName"
+                @blur="v$.lastName.$touch()"
+                :class="['form-control', {'is-invalid': v$.lastName.$dirty && v$.lastName.$error}]"
+                placeholder="Your last name"
+              />
+            </div>
+            <div v-if="v$.lastName.$dirty && v$.lastName.$error" class="form-error">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              <span v-if="v$.lastName.required.$invalid">Last name is required.</span>
+              <span v-else-if="v$.lastName.alpha.$invalid">Last name must contain only English letters.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group mb-3">
+          <label class="form-label">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-envelope"></i>
+            </span>
+            <input
+              id="email"
+              v-model="state.email"
+              type="email"
+              @blur="v$.email.$touch()"
+              :class="['form-control', {'is-invalid': v$.email.$dirty && v$.email.$error}]"
+              placeholder="Your email address"
+            />
+          </div>
+          <div v-if="v$.email.$dirty && v$.email.$error" class="form-error">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            Valid email is required.
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="form-group mb-3">
+          <label class="form-label">Country</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-globe"></i>
+            </span>
+            <select
+              id="country"
+              v-model="state.country"
+              @change="v$.country.$touch()"
+              :class="['form-select', {'is-invalid': v$.country.$dirty && v$.country.$error}]"
+            >
+              <option value="" disabled>Select your country</option>
+              <option v-for="option in countryOptions" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
+          </div>
+          <div v-if="v$.country.$dirty && v$.country.$error" class="form-error">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            Country is required.
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group mb-3">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-lock"></i>
+            </span>
+            <input
+              id="password"
+              type="password"
+              v-model="state.password"
+              @blur="v$.password.$touch()"
+              :class="['form-control', {'is-invalid': v$.password.$dirty && v$.password.$error}]"
+              placeholder="Choose a password"
+            />
+          </div>
+          <div v-if="v$.password.$dirty && v$.password.$error" class="form-error">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <span v-if="v$.password.required.$invalid">Password is required.</span>
+            <span v-else-if="v$.password.minLength.$invalid">Password must be at least 5 characters.</span>
+            <span v-else-if="v$.password.maxLength.$invalid">Password must be at most 10 characters.</span>
+            <span v-else-if="v$.password.hasDigit.$invalid">Password must contain at least one digit.</span>
+            <span v-else-if="v$.password.hasSpecial.$invalid">Password must contain at least one special character.</span>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group mb-4">
+          <label class="form-label">Confirm Password</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-shield-lock"></i>
+            </span>
+            <input
+              id="confirmedPassword"
+              type="password"
+              v-model="state.confirmedPassword"
+              @blur="v$.confirmedPassword.$touch()"
+              :class="['form-control', {'is-invalid': v$.confirmedPassword.$dirty && v$.confirmedPassword.$error}]"
+              placeholder="Confirm your password"
+            />
+          </div>
+          <div v-if="v$.confirmedPassword.$dirty && v$.confirmedPassword.$error" class="form-error">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <span v-if="v$.confirmedPassword.required.$invalid">Confirmation is required.</span>
+            <span v-else-if="v$.confirmedPassword.sameAsPassword.$invalid">
+              Passwords do not match.
+            </span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn custom-btn w-100">
+          <i class="bi bi-person-plus me-2"></i>
+          Create Account
+        </button>
+
+        <!-- Error Alert -->
+        <div class="alert alert-danger mt-3" v-if="state.submitError">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Registration failed: {{ state.submitError }}
+        </div>
+
+        <!-- Login Link -->
+        <div class="text-center mt-4">
+          <p class="mb-0">Already have an account?</p>
+          <router-link to="/login" class="login-link">
+            Log In Here
+          </router-link>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -261,5 +321,116 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border: 1px solid #e6e0d6;
+  margin: 2rem auto;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-header h1 {
+  font-weight: 600;
+  color: #444444;
+  margin-bottom: 0.5rem;
+}
+
+.accent-line {
+  height: 3px;
+  width: 80px;
+  background-color: #d1925e;
+  margin: 0 auto;
+}
+
+.register-form {
+  margin-top: 1rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #444444;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.input-group-text {
+  background-color: #f9f5f0;
+  border-color: #e6e0d6;
+  color: #d1925e;
+}
+
+.form-control, .form-select {
+  border-color: #e6e0d6;
+  padding: 0.6rem 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #d1925e;
+  box-shadow: 0 0 0 0.25rem rgba(209, 146, 94, 0.25);
+}
+
+.form-error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.custom-btn {
+  background-color: #d1925e;
+  border: none;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.custom-btn:hover, .custom-btn:focus {
+  background-color: #c07e4b;
+  box-shadow: 0 0.25rem 0.5rem rgba(209, 146, 94, 0.25);
+  transform: translateY(-2px);
+}
+
+.login-link {
+  color: #d1925e;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.login-link:hover {
+  color: #c07e4b;
+  text-decoration: underline;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c2c7;
+  color: #842029;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 576px) {
+  .register-card {
+    padding: 2rem 1.5rem;
+  }
+}
+</style>
 
 
