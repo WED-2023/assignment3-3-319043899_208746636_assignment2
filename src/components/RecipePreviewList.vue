@@ -177,6 +177,7 @@ export default {
         "isGlutenFree": false
       }
     ];
+      sessionStorage.setItem('randomRecipes', JSON.stringify(this.recipes));
 
       } else if (this.type === "favorite") {
         // Fetch favorite recipes from API

@@ -92,13 +92,15 @@ export default {
           }
         }
 
-      if (this.sourceType==="favorite"){
-        sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
-      }
-      else if (this.sourceType === "MyRecipes"){
-        sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
-      }
-      
+      // if (this.sourceType==="favorite"){
+      //   sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
+      // }
+      // else if (this.sourceType === "MyRecipes"){
+      //   sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
+      // }
+      sessionStorage.setItem('currentRecipe', JSON.stringify(this.recipe));
+
+
       this.$router.push({
         path: `/recipe/${this.recipe.recipe_id}`,
         query: { source: this.sourceType }
