@@ -125,6 +125,7 @@
               break;
             }
             case "lastViewed": {
+
               this.loadRecipesFromSession('lastViewedRecipes');
               const lastViewedArr = Array.isArray(this.$root.store.lastViewedRecipes) ? this.$root.store.lastViewedRecipes : [];
               _recipe = lastViewedArr.find(r => r.recipe_id === recipeId);
@@ -173,6 +174,16 @@
                 }
                 break;
               }
+            case "family":{
+              const recipeFromSession = sessionStorage.getItem('currentRecipe');
+              if (recipeFromSession) {
+                _recipe = JSON.parse(recipeFromSession);
+              } else {
+                _recipe = null;
+                console.warn("No favorite recipe found in sessionStorage");
+              }
+              break;
+            }
 
             default:
               console.warn("Unknown sourceType:", sourceType);

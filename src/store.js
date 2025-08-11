@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 const store = reactive({
   username: sessionStorage.getItem('username'),
   server_domain: 'http://localhost:3000',
+  familyRecipes: {},
   randomRecipes : {},
   lastViewedRecipes : {},
   searchRecipes: {},

@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h1 class="title text-center mb-4">My Recipe App</h1>
 
     <div class="row">
       <!-- Left Column - Random Recipes -->
