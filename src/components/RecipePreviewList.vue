@@ -134,49 +134,49 @@ export default {
 
       } else if (this.type === "random") {
 
-        // try {
-        // const response = await this.axios.get(
-        //     this.$root.store.server_domain + "/recipes/random"
-        // );
-        // console.log("API response:", response.data);
-        // const recipes = response.data;
-        // this.recipes = [];
-        // this.recipes.push(...recipes);
-        // } catch (error) {
-        // console.log(error);
-        // }
+        try {
+        const response = await this.axios.get(
+            this.$root.store.server_domain + "/recipes/random"
+        );
+        console.log("API response:", response.data);
+        const recipes = response.data;
+        this.recipes = [];
+        this.recipes.push(...recipes);
+        } catch (error) {
+        console.log(error);
+        }
 
 
     //when there are no points in spoonacular, we use the following code://
-    this.recipes = [
-      {
-        "recipe_id": 657968,
-        "name": "Raw Carrot Cake",
-        "picture": "https://img.spoonacular.com/recipes/657968-556x370.jpg",
-        "timeToMake": "45 minutes",
-        "popularity": 10,
-        "dietCategory": "vegan",
-        "isGlutenFree": true
-      },
-      {
-        "recipe_id": 658509,
-        "name": "Roasted Broccoli with Lemon and Garlic",
-        "picture": "https://img.spoonacular.com/recipes/658509-556x370.jpg",
-        "timeToMake": "25 minutes",
-        "popularity": 18,
-        "dietCategory": "vegetarian",
-        "isGlutenFree": true
-      },
-      {
-        "recipe_id": 661925,
-        "name": "Strawberry and Nutella Cobbler",
-        "picture": "https://img.spoonacular.com/recipes/661925-556x370.jpg",
-        "timeToMake": "55 minutes",
-        "popularity": 25,
-        "dietCategory": "",
-        "isGlutenFree": false
-      }
-    ];
+    // this.recipes = [
+    //   {
+    //     "recipe_id": 657968,
+    //     "name": "Raw Carrot Cake",
+    //     "picture": "https://img.spoonacular.com/recipes/657968-556x370.jpg",
+    //     "timeToMake": "45 minutes",
+    //     "popularity": 10,
+    //     "dietCategory": "vegan",
+    //     "isGlutenFree": true
+    //   },
+    //   {
+    //     "recipe_id": 658509,
+    //     "name": "Roasted Broccoli with Lemon and Garlic",
+    //     "picture": "https://img.spoonacular.com/recipes/658509-556x370.jpg",
+    //     "timeToMake": "25 minutes",
+    //     "popularity": 18,
+    //     "dietCategory": "vegetarian",
+    //     "isGlutenFree": true
+    //   },
+    //   {
+    //     "recipe_id": 661925,
+    //     "name": "Strawberry and Nutella Cobbler",
+    //     "picture": "https://img.spoonacular.com/recipes/661925-556x370.jpg",
+    //     "timeToMake": "55 minutes",
+    //     "popularity": 25,
+    //     "dietCategory": "",
+    //     "isGlutenFree": false
+    //   }
+    // ];
       sessionStorage.setItem('randomRecipes', JSON.stringify(this.recipes));
 
       } else if (this.type === "favorite") {

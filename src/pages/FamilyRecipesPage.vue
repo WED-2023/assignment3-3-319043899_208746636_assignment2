@@ -14,7 +14,7 @@
 
 <script>
 import RecipePreview from '../components/RecipePreview.vue';
-
+import AbaShakshuka from '@/assets/AbaShakshuka.jpg';
 export default {
   name: "FamilyRecipesPage",
   components: { RecipePreview },
@@ -22,29 +22,28 @@ export default {
     return {
       familyRecipes: [
         {
-          recipe_id: 1750517500885,
-          name: 'Tomato Cutlets',
-          picture: 'https://img.spoonacular.com/recipes/663588-556x370.jpg',
+          recipe_id: 2222,
+          name: 'Israeli Shakshuka',
+          picture: AbaShakshuka,
           timeToMake: 45,
-          popularity: 1,
-          dietCategory: 'none',
-          isGlutenFree: 0,
+          popularity: 0,
+          dietCategory: 'Vegetarian',
+          isGlutenFree: 1,
           created_by: 1,
-          description: 'You can never have too many side dish recipes, so give Tomato Cutlets a try. This recipe serves 5. One portion of this dish contains about <b>15g of protein</b>, <b>17g of fat</b>, and a total of <b>305 calories</b>. For <b>$2.98 per serving</b>, this recipe <b>covers 25%</b> of your daily requirements of vitamins and minerals. This recipe from Foodista requires salt, juice of lemon, olive oil, and eggs. 19 people were glad they tried this recipe. From preparation to the plate, this recipe takes about <b>45 minutes</b>. Overall, this recipe earns an <b>excellent spoonacular score of 88%</b>. <a href="https://spoonacular.com/recipes/chicken-cutlets-with-tomato-saut-27288">Chicken Cutlets with Tomato Sauté</a>, <a href="https://spoonacular.com/recipes/turkey-cutlets-with-tomato-sauce-411770">Turkey Cutlets with Tomato Sauce</a>, and <a href="https://spoonacular.com/recipes/tomato-and-garlic-stuffed-chicken-cutlets-84694">Tomato-and-Garlic-Stuffed Chicken Cutlets</a> are very similar to this recipe.',
+          description: 'This a recipe that my father enjoy cooking for the family. It is a traditional Israeli dish made with poached eggs in a spicy tomato sauce.',
           ingredients: [
-            '6-7 baby eggplant - halved',
-            '3 beefsteak tomatoes – sliced about ¼ inch thick',
-            '1 cup - Italian style bread crumbs',
-            '2 eggs beaten with 1 tablespoon milk',
-            'Juice of ½ lemon',
-            '2-3 tablespoons of olive oil',
-            '½ cup Fresh Italian parsley – chopped',
+            '1 large onion',
+            '4 tomatoes',
+            '1 capsicum',
+            '2 cloves garlic',
+            '4 eggs',
+            '1 spoon paprika',
+            '1 can of tomato paste',
             'Dashes - pepper',
-            'Fresh grated Romano cheese',
             'Dashes – salt'
           ],
           cuisine: 'Middle Eastern',
-          dishes: 4,
+          dishes: 2,
           analyzedInstructions: [
             { name: '', steps: [
               { step: 'Slice the eggplants and tomatoes.', number: 1, equipment: [], ingredients: [] },
